@@ -1,0 +1,146 @@
+/* ===================================================
+   TABELE SŁOWNIKÓW I MENU AKCJI WIERSZA
+   =================================================== */
+
+.tabs-nav {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 14px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+    font-family: var(--font-family-main);
+    font-size: var(--font-size-base);
+    padding: 8px 14px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.tab-btn.active {
+    font-weight: bold;
+    color: var(--color-text-main);
+    border-bottom-color: var(--color-primary);
+}
+
+.tab-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.table-container {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+    text-align: left;
+}
+
+.data-table th, .data-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.data-table th {
+    background-color: var(--color-bg);
+    font-weight: bold;
+    color: var(--color-text-main);
+}
+
+.data-table tr:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.table-menu-container {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-table-menu {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--color-text-muted);
+    font-size: 18px;
+    line-height: 1;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.btn-table-menu:hover,
+.table-menu-container.active .btn-table-menu {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text-main);
+    border-color: var(--color-border);
+}
+
+.table-menu-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 2px);
+    z-index: 100;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
+    min-width: 100px;
+    padding: 4px;
+}
+
+.table-menu-container.active .table-menu-dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.table-menu-item {
+    background: transparent;
+    border: none;
+    color: var(--color-text-main);
+    font-family: var(--font-family-main);
+    font-size: 14px;
+    text-align: left;
+    padding: 6px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast);
+    width: 100%;
+    white-space: nowrap;
+}
+
+.table-menu-item:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.table-menu-item-danger {
+    color: var(--color-danger);
+}
+
+.table-menu-item-danger:hover {
+    background-color: var(--color-danger-bg);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: var(--color-text-muted);
+}

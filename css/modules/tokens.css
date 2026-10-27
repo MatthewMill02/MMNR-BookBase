@@ -1,0 +1,59 @@
+/* ===================================================
+   DESIGN TOKENS (GLOBALNE ZMIENNE PROJEKTU)
+   Wspólna definicja typografii, kolorystyki, promieni
+   oraz przejść animacji w całej aplikacji.
+   =================================================== */
+
+:root {
+    /* Typografia i hierarchia wielkości czcionek */
+    --font-family-main: Arial, sans-serif;
+    --font-size-xs: 14px;
+    --font-size-sm: 14px;
+    --font-size-base: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+    --font-size-title: 22px;
+    --font-size-welcome: 28px;
+
+    /* Spójna, stonowana ciemnoniebieska paleta barw (Dark Navy / Slate) */
+    --color-bg: #0b1118;
+    --color-surface: #131b26;
+    --color-surface-hover: #1b2636;
+    --color-surface-active: #233145;
+    --color-border: #233246;
+    --color-border-subtle: #172230;
+    
+    /* Tekst */
+    --color-text-main: #e6edf3;
+    --color-text-muted: #8b949e;
+    --color-text-light: #6e7681;
+
+    /* Domyślny akcent profilu użytkownika (nadpisywany dynamicznie z arkusza) */
+    --color-primary: #2a4365;
+    --color-primary-hover: #1e314b;
+    --color-secondary: #3b4453;
+    --color-secondary-hover: #4a5568;
+    
+    /* Odznaki statusu i ocen */
+    --color-badge-status: #182332;
+    --color-badge-status-text: #c9d1d9;
+    --color-badge-rating-bg: #101824;
+    --color-badge-rating-text: #e6edf3;
+    
+    /* Komunikaty statusu / walidacja */
+    --color-danger: #e55353;
+    --color-danger-bg: rgba(229, 83, 83, 0.12);
+    --color-success: #2ea043;
+    --color-success-bg: rgba(46, 160, 67, 0.12);
+    --color-warning: #d29922;
+
+    /* Zaokrąglenia krawędzi (Radius) */
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-round: 50%;
+
+    /* Przejścia (Transitions) */
+    --transition-fast: 0.15s ease-in-out;
+    --transition-normal: 0.25s ease-in-out;
+}

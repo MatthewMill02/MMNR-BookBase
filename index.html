@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) - Wersja 1.0</title>
+    <meta name="description" content="Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) - osobista baza przeczytanych i planowanych książek.">
+    <link rel="icon" id="dynamicFavicon" type="image/jpeg" href="assets/icon.jpg">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- GÓRNY PASEK NAWIGACYJNY (Ukryty na ekranie powitalnym) -->
+    <header class="app-header" id="appHeader" style="display: none;">
+        <!-- Desktop Header Left -->
+        <div class="header-left desktop-only">
+            <button id="btnNavHome" class="nav-btn" title="Powrót do ekranu powitalnego">
+                <span class="nav-icon">&lt;</span> Start
+            </button>
+            <!-- Rozwijane menu profili -->
+            <div class="profile-dropdown-wrapper" id="profileDropdownWrapper">
+                <button class="active-profile-btn" id="activeProfileBtn" title="Kliknij, aby zmienić profil">
+                    <img id="activeProfileAvatar" src="assets/MM Books.PNG" alt="Avatar" class="mini-avatar" onerror="this.src='assets/icon.jpg'">
+                    <span id="activeProfileName">MM Books</span>
+                    <span class="dropdown-caret">v</span>
+                </button>
+                <div class="profile-dropdown-menu" id="profileDropdownMenu" style="display: none;">
+                    <!-- Pozostałe profile generowane dynamicznie w JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Header Left (Hamburger Menu ☰ + Aktywny profil w jednej linii) -->
+        <div class="header-mobile-bar mobile-only">
+            <button id="btnMobileMenuToggle" class="mobile-hamburger-btn" title="Menu opcji i profili">
+                <span class="hamburger-icon">☰</span>
+            </button>
+            <div class="mobile-header-user-tag" id="mobileHeaderUserTag">
+                <img id="mobileActiveAvatar" src="assets/MM Books.PNG" alt="Avatar" class="mini-avatar" onerror="this.src='assets/icon.jpg'">
+                <span id="mobileActiveName">MM Books</span>
+            </div>
+        </div>
+
+        <!-- Desktop Header Right -->
+        <div class="header-right desktop-only">
+            <button id="btnOpenAddGameModal" class="action-btn btn-action-accent admin-only-block" style="display: none;" title="Dodaj nową książkę">[+] Dodaj książkę</button>
+            <button id="btnRefreshData" class="action-btn" title="Pobierz najświeższe dane z Google Sheets">[Odśwież]</button>
+            <button id="btnToggleStats" class="action-btn">Ustawienia</button>
+            <button id="btnAdminLoginModal" class="action-btn">Dostęp</button>
+            
+            <!-- Wskaźnik stanu synchronizacji i kolejki zadań w tle -->
+            <div id="syncStatusWrapper" class="sync-status-wrapper" style="display: none;">
+                <button id="btnSyncStatus" class="sync-status-btn" title="Kolejka synchronizacji w chmurze">
+                    <img id="syncStatusImg" src="assets/sync.png" alt="Status synchronizacji" class="sync-icon-img">
+                </button>
+                <button id="btnLogoutAdmin" class="logout-btn" title="Wyloguj z trybu administratora">[Wyloguj]</button>
+
+                <!-- Rozwijany panel kolejki synchronizacji -->
+                <div id="syncQueuePanel" class="sync-queue-panel" style="display: none;">
+                    <div class="sync-queue-header">
+                        <h4>Kolejka synchronizacji w tle</h4>
+                        <span id="syncQueueCount" class="queue-count-badge">0 zadań</span>
+                    </div>
+                    <div id="syncQueueList" class="sync-queue-list">
+                        <p class="queue-empty-msg">Wszystkie zmiany są zsynchronizowane.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Header Right (Dodaj książkę + Odśwież + Sync Status) -->
+        <div class="mobile-header-right mobile-only">
+            <button id="btnMobileAddGame" class="action-btn btn-action-accent admin-only-block" style="display: none;" title="Dodaj nową książkę">[+] Dodaj książkę</button>
+            <button id="btnMobileRefresh" class="action-btn" title="Odśwież">[Odśwież]</button>
+            <div id="mobileSyncWrapper" class="sync-status-wrapper" style="display: none;">
+                <button id="btnMobileSyncStatus" class="sync-status-btn">
+                    <img id="mobileSyncStatusImg" src="assets/sync.png" alt="Sync" class="sync-icon-img">
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ROZWIJANA SZUFLADA MOBILNA (MOBILE DRAWER POD ☰) -->
+    <div id="mobileNavDrawer" class="mobile-nav-drawer" style="display: none;">
+        <div class="drawer-backdrop" id="mobileDrawerBackdrop"></div>
+        <div class="drawer-panel">
+            <div class="drawer-header">
+                <h3>Menu aplikacji</h3>
+                <button id="btnCloseMobileDrawer" class="drawer-close-btn">&times;</button>
+            </div>
+            <div class="drawer-section">
+                <span class="drawer-label">Przełącz profil:</span>
+                <div id="mobileProfileList" class="mobile-profile-list">
+                    <!-- Profile generowane dynamicznie w JS -->
+                </div>
+            </div>
+            <div class="drawer-divider"></div>
+            <div class="drawer-section">
+                <button id="btnMobileHome" class="drawer-menu-item">
+                    <span class="drawer-item-icon">&lt;</span>
+                    <span>Powrót na start</span>
+                </button>
+                <button id="btnMobileSettings" class="drawer-menu-item">
+                    <span class="drawer-item-icon">⚙</span>
+                    <span>Ustawienia Bazy</span>
+                </button>
+                <button id="btnMobileAdmin" class="drawer-menu-item">
+                    <span class="drawer-item-icon">🔒</span>
+                    <span id="mobileAdminLabel">Dostęp administratora</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. EKRAN POWITALNY (STARTOWY) -->
+    <main id="welcomeScreen" class="welcome-screen">
+        <div class="welcome-center-box" id="welcomeCenterBox">
+            <h1 class="welcome-title">Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly)</h1>
+            <p class="welcome-subtitle">Wybierz profil czytelnika</p>
+        </div>
+        <div id="headsScatterContainer" class="heads-scatter-container">
+            <!-- Awatary czytelników generowane dynamicznie i rozmieszczane losowo -->
+        </div>
+    </main>
+
+    <!-- 2. WIDOK GŁÓWNY BIBLIOTEKI KSIĄŻEK (DASHBOARD) -->
+    <main id="dashboardScreen" class="dashboard-screen" style="display: none;">
+        <div class="dashboard-main-layout">
+            <!-- LEWA KOLUMNA: INFORMACJE + GABLOTA + STATYSTYKI, A POD SPODEM OBRAZ -->
+            <aside class="dashboard-left-column">
+                <!-- 1. BLOK PROFILU (INFORMACJE + GABLOTA + STATYSTYKI) -->
+                <section class="profile-banner" id="profileBanner">
+                    <div class="profile-info-block">
+                        <div class="profile-info-user">
+                            <img id="bannerProfileAvatar" src="assets/MM Books.PNG" alt="Profil czytelnika" class="banner-avatar" onerror="this.src='assets/icon.jpg'">
+                            <div>
+                                <h2 id="bannerProfileName" class="banner-username">MM Books</h2>
+                                <span id="bannerProfileSheet" class="banner-usersheet">MM Books</span>
+                            </div>
+                        </div>
+                        <button id="btnEditShowcase" class="btn-card-action admin-only-block" style="display: none;" title="Edytuj gablotę wyróżnionych książek">[Edytuj gablotę]</button>
+                    </div>
+
+                    <div class="showcase-and-stats-block">
+                        <!-- GABLOTA WYRÓŻNIONYCH GIER (8 GIER) -->
+                        <div class="showcase-column" id="showcaseColumn">
+                            <div class="showcase-header">
+                                <h3>Wyróżnione książki</h3>
+                                <button type="button" id="btnToggleShowcaseCollapse" class="btn-showcase-collapse" title="Zwiń / rozwiń gablotę">[Zwiń]</button>
+                            </div>
+                            <div id="showcaseShelfContainer" class="showcase-shelf-container">
+                                <!-- Ciemna szafka wyróżnionych książek generowana dynamicznie -->
+                            </div>
+                        </div>
+
+                        <!-- CIENKA PIONOWA KRESKA ODDZIELAJĄCA GABLOTĘ OD STATYSTYK -->
+                        <div class="banner-vertical-divider"></div>
+
+                        <!-- 4 STATYSTYKI PROFILU UŁOŻONE PIONOWO -->
+                        <div class="profile-stats-vertical-grid">
+                            <div class="stat-card">
+                                <span class="stat-value" id="statTotalGames">0</span>
+                                <span class="stat-label">Łącznie książek</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="statCompletedGames">0</span>
+                                <span class="stat-label">Przeczytane</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="statTotalHours">0</span>
+                                <span class="stat-label">W trakcie</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-value" id="statAvgRating">0.0</span>
+                                <span class="stat-label">Średnia ocen</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. OBRAZ / MONITOR INFORMACYJNY (POD BELKĄ INFORMACJI) -->
+                <div class="shelf-sidebar-monitor" id="shelfSidebarMonitor">
+                    <div class="mc-monitor-container" id="mcMonitorContainer">
+                        <div class="mc-monitor-frame">
+                            <div class="mc-monitor-screen" id="mcMonitorScreen"></div>
+                        </div>
+                        <div class="mc-monitor-actions admin-only-block" id="mcMonitorActions">
+                            <button type="button" class="monitor-ext-btn monitor-ext-edit" id="btnMonitorExtEdit" disabled title="Edytuj wybraną książkę"></button>
+                            <button type="button" class="monitor-ext-btn monitor-ext-delete" id="btnMonitorExtDelete" disabled title="Usuń wybraną książkę"></button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- PRAWA KOLUMNA: WYSZUKIWARKA I PÓŁKI Z KSIĄŻKAMI (LUB WYKRESY) -->
+            <div class="dashboard-right-column">
+                <!-- TAB 1: BAZA KSIĄŻEK (WYSZUKIWARKA + PÓŁKI) -->
+                <section id="tabViewGames" class="main-tab-view">
+                    <!-- WYSZUKIWARKA, SORTOWANIE, GRUPOWANIE I FILTRY (OSOBNY ELEMENT NA GÓRZE) -->
+                    <div class="dashboard-controls" id="dashboardControls">
+                        <div class="search-sort-bar">
+                            <div class="search-wrapper">
+                                <img src="assets/lupa.png" alt="Szukaj" class="search-bar-icon">
+                                <input type="text" id="searchInput" class="search-input" placeholder="Szukaj książki, autora, gatunku...">
+                                <button id="btnClearSearch" class="clear-btn" style="display: none;">[x]</button>
+                            </div>
+                            <div class="sort-group-filters-row">
+                                <div class="sort-wrapper">
+                                    <label for="sortSelect" class="desktop-only">Sortuj:</label>
+                                    <select id="sortSelect" class="form-select">
+                                        <option value="updated_desc" selected>Ostatnio zaktualizowane</option>
+                                        <option value="title_asc">Tytuł (A-Z)</option>
+                                        <option value="title_desc">Tytuł (Z-A)</option>
+                                        <option value="author_asc">Autor (A-Z)</option>
+                                        <option value="rating_desc">Ocena (Od najwyższej)</option>
+                                        <option value="rating_asc">Ocena (Od najniższej)</option>
+                                        <option value="date_desc">Data ukończenia (Od najnowszych)</option>
+                                    </select>
+                                </div>
+                                <div class="group-wrapper">
+                                    <label for="groupSelect" class="desktop-only">Grupuj:</label>
+                                    <select id="groupSelect" class="form-select">
+                                        <option value="none" selected>Brak</option>
+                                        <option value="status">Status</option>
+                                        <option value="rating">Ocena</option>
+                                        <option value="platform">Gatunek</option>
+                                        <option value="author">Autor</option>
+                                        <option value="year">Rok ukończenia</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FILTRY WIELOKROTNEGO WYBORU (LISTY ROZWIJANE) ORAZ TABY W PRAWYM ROGU -->
+                        <div class="filters-row" id="filtersRow">
+                            <!-- Filtr Statusu -->
+                            <div class="filter-dropdown-wrapper" id="filterStatusWrapper">
+                                <button type="button" class="filter-dropdown-btn" id="btnFilterStatus">
+                                    <span id="labelFilterStatus">Status: Wszystkie</span>
+                                    <span class="dropdown-caret">v</span>
+                                </button>
+                                <div class="filter-dropdown-menu" id="menuFilterStatus" style="display: none;">
+                                    <div class="filter-checklist" id="checklistStatus"></div>
+                                </div>
+                            </div>
+
+                            <!-- Filtr Gatunku (zastępuje platformę) -->
+                            <div class="filter-dropdown-wrapper" id="filterPlatformWrapper">
+                                <button type="button" class="filter-dropdown-btn" id="btnFilterPlatform">
+                                    <span id="labelFilterPlatform">Gatunek: Wszystkie</span>
+                                    <span class="dropdown-caret">v</span>
+                                </button>
+                                <div class="filter-dropdown-menu" id="menuFilterPlatform" style="display: none;">
+                                    <div class="filter-checklist" id="checklistPlatform"></div>
+                                </div>
+                            </div>
+
+                            <!-- Filtr Tagów (zastępuje kolekcje) -->
+                            <div class="filter-dropdown-wrapper" id="filterCollectionWrapper">
+                                <button type="button" class="filter-dropdown-btn" id="btnFilterCollection">
+                                    <span id="labelFilterCollection">Tagi: Wszystkie</span>
+                                    <span class="dropdown-caret">v</span>
+                                </button>
+                                <div class="filter-dropdown-menu" id="menuFilterCollection" style="display: none;">
+                                    <div class="filter-checklist" id="checklistCollection"></div>
+                                </div>
+                            </div>
+
+                            <!-- Przycisk resetowania filtrów -->
+                            <button type="button" id="btnResetFilters" class="btn-secondary" style="font-size: 14px; padding: 6px 12px;">Resetuj</button>
+
+                            <!-- GŁÓWNE ZAKŁADKI NAWIGACJI (TABY W PRAWYM DOLNYM ROGU PASKA FILTRÓW) -->
+                            <nav class="main-tabs-bar dashboard-tabs-bar" id="mainNavTabs">
+                                <button class="main-tab-btn active" id="tabBtnGames" data-target="tabViewGames">Baza książek</button>
+                                <button class="main-tab-btn" id="tabBtnCharts" data-target="tabViewCharts">Wykresy</button>
+                            </nav>
+                        </div>
+                    </div>
+
+                    <!-- PRAWA STRONA: PÓŁKI Z KSIĄŻKAMI -->
+                    <div class="shelf-main-area">
+                        <!-- SKELETON LOADER -->
+                        <div id="skeletonLoader" class="skeleton-grid">
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                        </div>
+
+                        <!-- PÓŁKI Z KSIĄŻKAMI -->
+                        <div id="gamesShelvesContainer" class="games-shelves-container" style="display: none;"></div>
+
+                        <!-- KOMUNIKAT BRAKU WYNIKÓW -->
+                        <div id="emptyResultsMessage" class="empty-state" style="display: none;">
+                            <p>Nie znaleziono książek spełniających wybrane kryteria.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: WYKRESY I PORÓWNANIA -->
+                <section id="tabViewCharts" class="main-tab-view" style="display: none;">
+                    <div class="charts-overview-container">
+                        <div class="chart-box">
+                            <div class="chart-header-bar">
+                                <h3>Porównanie profili czytelników</h3>
+                                <nav class="main-tabs-bar dashboard-tabs-bar">
+                                    <button class="main-tab-btn" data-target="tabViewGames">Baza książek</button>
+                                    <button class="main-tab-btn active" data-target="tabViewCharts">Wykresy</button>
+                                </nav>
+                            </div>
+                            <div id="chartsComparisonContent" class="charts-comparison-content">
+                                <!-- Wypełniane dynamicznie w JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+
+    <!-- 4. MODAL: AUTORYZACJA I HASŁO DOSTĘPU -->
+    <div id="adminLoginModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-window modal-small">
+            <form id="adminLoginForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="adminUserSelect">Profil czytelnika:</label>
+                        <select id="adminUserSelect" class="form-select" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminPasswordInput">Hasło:</label>
+                        <input type="password" id="adminPasswordInput" class="form-input" required autocomplete="current-password" placeholder="Wpisz hasło profilu">
+                    </div>
+                    <div id="adminLoginError" class="form-error" style="display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close="adminLoginModal">Anuluj</button>
+                    <button type="submit" id="btnSubmitAdminLogin" class="btn-primary">Zaloguj</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 4. MODAL: SZCZEGÓŁY KSIĄŻKI (DLA WIDOKU MOBILNEGO) -->
+    <div id="gameDetailsModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-window modal-details">
+            <div class="modal-header">
+                <h2 id="detailsGameTitle">Szczegóły książki</h2>
+            </div>
+            <div class="modal-body" id="gameDetailsModalBody">
+                <!-- Szczegóły książki generowane dynamicznie w JS -->
+            </div>
+            <div class="modal-footer">
+                <div class="card-actions admin-only-block" id="detailsAdminActions" style="display: none; margin-right: auto;">
+                    <button type="button" class="btn-card-action btn-card-edit" id="btnDetailsEdit">Edytuj</button>
+                    <button type="button" class="btn-card-action btn-card-delete" id="btnDetailsDelete">Usuń</button>
+                </div>
+                <button type="button" class="action-btn" data-close="gameDetailsModal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. MODAL: DODAWANIE / EDYCJA KSIĄŻKI -->
+    <div id="gameEditModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-window modal-large">
+            <div class="modal-header">
+                <h2 id="gameEditModalTitle">Dodaj książkę do bazy</h2>
+            </div>
+            <form id="gameEditForm">
+                <input type="hidden" id="formGameId">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label for="formGameTitle">Tytuł książki *</label>
+                            <input type="text" id="formGameTitle" class="form-input" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label for="formGameStatus">Status *</label>
+                            <select id="formGameStatus" class="form-select" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label>Gatunek</label>
+                            <input type="hidden" id="formGamePlatform" value="">
+                            <input type="hidden" id="formGenre" value="">
+                            <div class="form-tags-picker-wrapper">
+                                <div id="formAvailableGenresContainer" class="form-available-tags"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="formAuthor">Autor</label>
+                            <input type="text" id="formAuthor" class="form-input">
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="formOrigin">Pochodzenie / Źródło</label>
+                            <input type="text" id="formOrigin" class="form-input">
+                        </div>
+                    </div>
+                    <div class="form-row ratings-form-row">
+                        <div class="form-group col-3 col-rating">
+                            <label for="formRatingFabuła" class="rating-label">Styl <span class="rating-scale">(0-10)</span></label>
+                            <input type="number" id="formRatingFabuła" class="form-input rating-input" step="0.1" min="0" max="10" placeholder="-">
+                        </div>
+                        <div class="form-group col-3 col-rating">
+                            <label for="formRatingGrafika" class="rating-label">Fabuła <span class="rating-scale">(0-10)</span></label>
+                            <input type="number" id="formRatingGrafika" class="form-input rating-input" step="0.1" min="0" max="10" placeholder="-">
+                        </div>
+                        <div class="form-group col-3 col-rating">
+                            <label for="formRatingMechanika" class="rating-label">Struktura <span class="rating-scale">(0-10)</span></label>
+                            <input type="number" id="formRatingMechanika" class="form-input rating-input" step="0.1" min="0" max="10" placeholder="-">
+                        </div>
+                        <div class="form-group col-3 col-rating">
+                            <label for="formRatingOgólna" class="rating-label">Ocena końcowa <span class="rating-scale">(0-10)</span></label>
+                            <input type="number" id="formRatingOgólna" class="form-input rating-input" step="0.1" min="0" max="10" placeholder="-">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="formCompletionDate">Data ukończenia</label>
+                            <input type="date" id="formCompletionDate" class="form-input">
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="formGameImage">Okładka książki (URL)</label>
+                            <input type="text" id="formGameImage" class="form-input" placeholder="https://... (URL do okładki)">
+                            <div id="formCoverPreviewBox" style="display: none; margin-top: 6px;">
+                                <img id="formCoverPreviewImg" src="" alt="Podgląd okładki" style="max-height: 60px; border-radius: 4px; border: 1px solid var(--color-border); object-fit: cover;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label>Tagi</label>
+                            <input type="hidden" id="formCollections" value="">
+                            <div class="form-tags-picker-wrapper">
+                                <div id="formAvailableTagsContainer" class="form-available-tags" style="margin-bottom: 8px;"></div>
+                                <span style="font-size: 14px; color: var(--color-text-muted); display: block; margin-bottom: 6px;">Specjalne tagi:</span>
+                                <div id="formSpecialTagsContainer" class="form-available-tags"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-12">
+                            <label for="formReview">Recenzja / Notatka</label>
+                            <textarea id="formReview" class="form-textarea" rows="6"></textarea>
+                        </div>
+                    </div>
+                    <div id="gameEditError" class="form-error" style="display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close="gameEditModal">Anuluj</button>
+                    <button type="submit" id="btnSaveGameSubmit" class="btn-primary">Zapisz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 6. MODAL: USTAWIENIA BAZY -->
+    <div id="statsModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-window modal-large">
+            <div class="modal-header">
+                <h2>Ustawienia Bazy</h2>
+            </div>
+            <div class="modal-body">
+                <div class="tabs-nav">
+                    <button class="tab-btn active" data-tab="tabStan">Statusy</button>
+                    <button class="tab-btn" data-tab="tabPlatformy">Gatunki</button>
+                    <button class="tab-btn" data-tab="tabKolekcje">Tagi</button>
+                    <button class="tab-btn" data-tab="tabUzytkownicy">Czytelnicy</button>
+                </div>
+
+                <div class="tab-content" id="tabStan">
+                    <div class="tab-actions admin-only-block" style="display: none;">
+                        <input type="text" id="newStanVal" class="form-input-inline" placeholder="Nowy status">
+                        <input type="color" id="newStanColorPicker" class="form-color-inline" value="#2a4365" title="Wybierz kolor statusu">
+                        <input type="text" id="newStanColor" class="form-input-inline" placeholder="#HEX" style="max-width: 90px;">
+                        <button id="btnAddStan" class="btn-primary">[+] Dodaj status</button>
+                    </div>
+                    <div class="table-container" id="tableStanContainer"></div>
+                </div>
+
+                <div class="tab-content" id="tabPlatformy" style="display: none;">
+                    <div class="tab-actions admin-only-block" style="display: none;">
+                        <input type="text" id="newPlatVal" class="form-input-inline" placeholder="Nowy gatunek">
+                        <button id="btnAddPlat" class="btn-primary">[+] Dodaj gatunek</button>
+                    </div>
+                    <div class="table-container" id="tablePlatformyContainer"></div>
+                </div>
+
+                <div class="tab-content" id="tabKolekcje" style="display: none;">
+                    <div class="tab-actions admin-only-block" style="display: none;">
+                        <input type="text" id="newKolVal" class="form-input-inline" placeholder="Nowy tag">
+                        <button id="btnAddKol" class="btn-primary">[+] Dodaj tag</button>
+                    </div>
+                    <div class="table-container" id="tableKolekcjeContainer"></div>
+                </div>
+
+                <div class="tab-content" id="tabUzytkownicy" style="display: none;">
+                    <div class="tab-actions admin-only-block" style="display: none; margin-bottom: 12px;">
+                        <button id="btnOpenAddUserModal" class="btn-primary">[+] Dodaj profil czytelnika</button>
+                    </div>
+                    <div class="table-container" id="tableUzytkownicyContainer"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" data-close="statsModal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. MODAL: DODAWANIE NOWEGO UŻYTKOWNIKA -->
+    <div id="addUserModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-window modal-small">
+            <div class="modal-header">
+                <h2>Dodaj Nowego Czytelnika</h2>
+            </div>
+            <form id="addUserForm">
+                <div class="modal-body">
+                    <p class="modal-hint">Tworzy nową zakładkę bazy książek "{Inicjały} Books" oraz automatycznie dopisuje kolumny i formuły statystyczne we wszystkich arkuszach.</p>
+                    <div class="form-group">
+                        <label for="newUserCode">Inicjały czytelnika (np. MM, NR, NK) *</label>
+                        <input type="text" id="newUserCode" class="form-input" required placeholder="np. NR" maxlength="5" style="text-transform: uppercase;">
+                    </div>
+                    <div class="form-group">
+                        <label for="newUserColor">Kolor zakładki arkusza</label>
+                        <input type="color" id="newUserColor" class="form-color" value="#2a4365">
+                    </div>
+                    <div id="addUserError" class="form-error" style="display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close="addUserModal">Anuluj</button>
+                    <button type="submit" id="btnSubmitAddUser" class="btn-primary">Utwórz profil i arkusz</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 8. MODAL: EDYCJA GABLOTY WYRÓŻNIONYCH KSIĄŻEK -->
+    <div id="showcaseEditModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-window modal-large">
+            <div class="modal-header">
+                <h2>Edycja gabloty wyróżnionych książek</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-hint">Wybierz do 8 wyróżnionych książek ze swojej biblioteki, które będą prezentowane na ciemnej półce wyróżnionych książek. <span id="showcaseSelectedCount" style="font-weight: bold; color: var(--color-text-main); margin-left: 6px;">(0/8)</span></p>
+                <div class="form-group">
+                    <input type="text" id="showcaseSearchInput" class="form-input" placeholder="Filtruj listę książek...">
+                </div>
+                <div id="showcaseGamesChecklist" class="showcase-checklist">
+                    <!-- Lista checkboxów generowana dynamicznie -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" data-close="showcaseEditModal">Anuluj</button>
+                <button type="button" id="btnSaveShowcase" class="btn-primary">Zapisz gablotę</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. MODAL: EDYCJA POZYCJI W SŁOWNIKU -->
+    <div id="editSettingModal" class="modal-backdrop" style="display: none;">
+        <div class="modal-window modal-small">
+            <div class="modal-header">
+                <h2 id="editSettingModalTitle">Edytuj pozycję</h2>
+            </div>
+            <form id="editSettingForm">
+                <div class="modal-body">
+                    <input type="hidden" id="editSettingCategory">
+                    <input type="hidden" id="editSettingOldValue">
+                    <div class="form-group">
+                        <label for="editSettingNewValue" id="editSettingValueLabel">Wartość:</label>
+                        <input type="text" id="editSettingNewValue" class="form-input" required>
+                    </div>
+                    <div class="form-group" id="editSettingColorGroup" style="display: none;">
+                        <label for="editSettingNewColor">Kolor statusu:</label>
+                        <div class="color-picker-input-wrapper">
+                            <input type="color" id="editSettingNewColorPicker" class="form-color-inline" value="#2a4365">
+                            <input type="text" id="editSettingNewColor" class="form-input" placeholder="#HEX">
+                        </div>
+                    </div>
+                    <div class="form-group" id="editSettingDescGroup" style="display: none;">
+                        <label for="editSettingNewDesc">Opis:</label>
+                        <input type="text" id="editSettingNewDesc" class="form-input">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close="editSettingModal">Anuluj</button>
+                    <button type="submit" class="btn-primary">Zapisz zmiany</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 10. MODAL: OSTRZEŻENIE O NIEZAPISANYCH ZMIANACH -->
+    <div id="unsavedChangesModal" class="modal-backdrop" style="display: none; z-index: 1200;">
+        <div class="modal-window modal-small">
+            <div class="modal-header">
+                <h2>Niezapisane zmiany</h2>
+            </div>
+            <div class="modal-body">
+                <p class="modal-hint" style="color: var(--color-text-main); font-size: 14px;">W formularzu znajdują się niezapisane zmiany. Co chcesz zrobić?</p>
+            </div>
+            <div class="modal-footer" style="display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
+                <button type="button" id="btnUnsavedDiscard" class="btn-secondary" style="color: #ff6b6b; border-color: rgba(239, 68, 68, 0.4);">Odrzuć zmiany</button>
+                <button type="button" id="btnUnsavedStay" class="btn-secondary">Wróć do edycji</button>
+                <button type="button" id="btnUnsavedSave" class="btn-primary">Zapisz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- STOPKA -->
+    <footer class="app-footer" id="appFooter">
+        <div class="footer-content">
+            <span>&copy; Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) | Wersja 1.0</span>
+        </div>
+    </footer>
+
+    <!-- PŁYWAJĄCY TOOLTIP MINECRAFT NAJECHANIA NA KSIĄŻKĘ -->
+    <div id="mcItemTooltip" class="mc-item-tooltip" style="display: none;"></div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

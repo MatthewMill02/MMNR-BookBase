@@ -1,0 +1,243 @@
+/* ===================================================
+   UKŁAD GŁÓWNY PULPITU (DASHBOARD)
+   =================================================== */
+
+.dashboard-screen {
+    flex: 1;
+    max-width: 1640px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 10px 12px;
+}
+
+.dashboard-main-layout {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+    width: 100%;
+}
+
+.dashboard-left-column {
+    width: 396px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.dashboard-right-column {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ===================================================
+   KONTROLKI PULPITU: WYSZUKIWARKA, SORTOWANIE, FILTRY
+   =================================================== */
+
+.dashboard-controls {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    margin-bottom: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.search-sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0;
+    flex-wrap: wrap;
+}
+
+.sort-group-filters-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.search-wrapper {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-bar-icon {
+    position: absolute;
+    left: 10px;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.search-input {
+    width: 100%;
+    font-family: var(--font-family-main);
+    font-size: var(--font-size-base);
+    padding: 8px 12px 8px 34px;
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: var(--color-primary);
+}
+
+.clear-btn {
+    position: absolute;
+    right: 8px;
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font-family: var(--font-family-main);
+    font-size: var(--font-size-base);
+    padding: 4px 6px;
+}
+
+.sort-wrapper,
+.group-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filters-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--color-border-subtle);
+    padding-top: 10px;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.filter-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+    min-width: 170px;
+}
+
+.filter-dropdown-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 12px;
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-main);
+    font-family: var(--font-family-main);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    min-height: 36px;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.filter-dropdown-btn:hover {
+    background-color: var(--color-surface-hover);
+    border-color: var(--color-secondary);
+}
+
+.filter-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    min-width: 210px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    max-height: 260px;
+    z-index: 150;
+    overflow-y: auto;
+    padding: 6px;
+}
+
+.filter-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.filter-check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-main);
+    user-select: none;
+}
+
+.filter-check-item:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.filter-check-item input[type="checkbox"] {
+    accent-color: var(--color-primary);
+    cursor: pointer;
+    width: 15px;
+    height: 15px;
+}
+
+/* ===================================================
+   ZAKŁADKI GŁÓWNE PULPITU (KSIĄŻKI / WYKRESY)
+   =================================================== */
+
+.dashboard-tabs-bar {
+    margin-left: auto;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    z-index: 5;
+    flex-shrink: 0;
+}
+
+.dashboard-tabs-bar .main-tab-btn {
+    font-family: var(--font-family-main);
+    font-size: 14px;
+    font-weight: bold;
+    padding: 7px 16px;
+    background-color: var(--color-bg);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    border-radius: 5px 5px 0 0;
+    cursor: pointer;
+    white-space: nowrap;
+    position: relative;
+    border-bottom: 2px solid transparent;
+    transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.dashboard-tabs-bar .main-tab-btn:hover {
+    color: var(--color-text-main);
+    border-color: var(--color-secondary);
+    background-color: var(--color-surface-hover);
+}
+
+.dashboard-tabs-bar .main-tab-btn.active {
+    color: #ffffff;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.25);
+}

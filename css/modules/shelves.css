@@ -325,3 +325,22 @@
     50% { opacity: 0.8; }
     100% { opacity: 0.4; }
 }
+
+/* ===================================================
+   KASKADOWA ANIMACJA WEJSCIA POLEK
+   =================================================== */
+
+@keyframes shelfFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.shelf-animated {
+    animation: shelfFadeIn 0.3s ease-out both;
+}

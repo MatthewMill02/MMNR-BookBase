@@ -98,6 +98,22 @@
         pointer-events: none !important;
     }
 
+    .btn-toggle-controls-mobile {
+        display: flex !important;
+    }
+
+    .dashboard-controls-collapsible.is-collapsed {
+        display: none !important;
+    }
+
+    .shelf-main-area {
+        min-height: 560px;
+    }
+
+    .games-shelves-container {
+        min-height: 550px;
+    }
+
     .search-sort-bar {
         display: flex;
         flex-wrap: wrap;
@@ -475,19 +491,22 @@
     }
 
     .shelf-group-shelves-row {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         justify-content: center;
-        gap: 16px;
+        align-content: start;
+        min-height: 550px;
+        gap: 8px;
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
     }
 
     .game-shelf-unit {
-        width: 280px;
-        height: 280px;
-        padding: 10px 13px;
+        width: 100%;
+        height: auto;
+        min-height: 250px;
+        padding: 8px;
         max-width: 100%;
         box-sizing: border-box;
     }

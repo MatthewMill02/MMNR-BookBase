@@ -203,9 +203,14 @@
                                 <input type="text" id="searchInput" class="search-input" placeholder="Szukaj książki, autora, gatunku...">
                                 <button id="btnClearSearch" class="clear-btn" style="display: none;">[x]</button>
                             </div>
+                            <button type="button" id="btnToggleControlsMobile" class="btn-toggle-controls-mobile mobile-only" title="Pokaż / ukryj opcje">&gt;</button>
+                        </div>
+
+                        <!-- ZWIJANE OPCJE KONTROLNE (NA TELEFONIE DOMYŚLNIE ZWINIĘTE) -->
+                        <div class="dashboard-controls-collapsible is-collapsed" id="dashboardControlsCollapsible">
                             <div class="sort-group-filters-row">
                                 <div class="sort-wrapper">
-                                    <label for="sortSelect" class="desktop-only">Sortuj:</label>
+                                    <span class="control-section-label">SORTOWANIE:</span>
                                     <select id="sortSelect" class="form-select">
                                         <option value="updated_desc" selected>Ostatnio zaktualizowane</option>
                                         <option value="title_asc">Tytuł (A-Z)</option>
@@ -217,7 +222,7 @@
                                     </select>
                                 </div>
                                 <div class="group-wrapper">
-                                    <label for="groupSelect" class="desktop-only">Grupuj:</label>
+                                    <span class="control-section-label">GRUPOWANIE:</span>
                                     <select id="groupSelect" class="form-select">
                                         <option value="none" selected>Brak</option>
                                         <option value="status">Status</option>
@@ -228,51 +233,52 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- FILTRY WIELOKROTNEGO WYBORU (LISTY ROZWIJANE) ORAZ TABY W PRAWYM ROGU -->
-                        <div class="filters-row" id="filtersRow">
-                            <!-- Filtr Statusu -->
-                            <div class="filter-dropdown-wrapper" id="filterStatusWrapper">
-                                <button type="button" class="filter-dropdown-btn" id="btnFilterStatus">
-                                    <span id="labelFilterStatus">Status: Wszystkie</span>
-                                    <span class="dropdown-caret">v</span>
-                                </button>
-                                <div class="filter-dropdown-menu" id="menuFilterStatus" style="display: none;">
-                                    <div class="filter-checklist" id="checklistStatus"></div>
+                            <!-- FILTRY WIELOKROTNEGO WYBORU (LISTY ROZWIJANE) ORAZ TABY W PRAWYM ROGU -->
+                            <div class="filters-row" id="filtersRow">
+                                <span class="control-section-label desktop-only" style="width: 100%; margin-bottom: -4px;">FILTRY:</span>
+                                <!-- Filtr Statusu -->
+                                <div class="filter-dropdown-wrapper" id="filterStatusWrapper">
+                                    <button type="button" class="filter-dropdown-btn" id="btnFilterStatus">
+                                        <span id="labelFilterStatus">Status: Wszystkie</span>
+                                        <span class="dropdown-caret">v</span>
+                                    </button>
+                                    <div class="filter-dropdown-menu" id="menuFilterStatus" style="display: none;">
+                                        <div class="filter-checklist" id="checklistStatus"></div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Filtr Gatunku (zastępuje platformę) -->
-                            <div class="filter-dropdown-wrapper" id="filterPlatformWrapper">
-                                <button type="button" class="filter-dropdown-btn" id="btnFilterPlatform">
-                                    <span id="labelFilterPlatform">Gatunek: Wszystkie</span>
-                                    <span class="dropdown-caret">v</span>
-                                </button>
-                                <div class="filter-dropdown-menu" id="menuFilterPlatform" style="display: none;">
-                                    <div class="filter-checklist" id="checklistPlatform"></div>
+                                <!-- Filtr Gatunku -->
+                                <div class="filter-dropdown-wrapper" id="filterPlatformWrapper">
+                                    <button type="button" class="filter-dropdown-btn" id="btnFilterPlatform">
+                                        <span id="labelFilterPlatform">Gatunek: Wszystkie</span>
+                                        <span class="dropdown-caret">v</span>
+                                    </button>
+                                    <div class="filter-dropdown-menu" id="menuFilterPlatform" style="display: none;">
+                                        <div class="filter-checklist" id="checklistPlatform"></div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Filtr Tagów (zastępuje kolekcje) -->
-                            <div class="filter-dropdown-wrapper" id="filterCollectionWrapper">
-                                <button type="button" class="filter-dropdown-btn" id="btnFilterCollection">
-                                    <span id="labelFilterCollection">Tagi: Wszystkie</span>
-                                    <span class="dropdown-caret">v</span>
-                                </button>
-                                <div class="filter-dropdown-menu" id="menuFilterCollection" style="display: none;">
-                                    <div class="filter-checklist" id="checklistCollection"></div>
+                                <!-- Filtr Tagów -->
+                                <div class="filter-dropdown-wrapper" id="filterCollectionWrapper">
+                                    <button type="button" class="filter-dropdown-btn" id="btnFilterCollection">
+                                        <span id="labelFilterCollection">Tagi: Wszystkie</span>
+                                        <span class="dropdown-caret">v</span>
+                                    </button>
+                                    <div class="filter-dropdown-menu" id="menuFilterCollection" style="display: none;">
+                                        <div class="filter-checklist" id="checklistCollection"></div>
+                                    </div>
                                 </div>
+
+                                <!-- Przycisk resetowania filtrów -->
+                                <button type="button" id="btnResetFilters" class="btn-secondary" style="font-size: 14px; padding: 6px 12px;">Resetuj</button>
+
+                                <!-- GŁÓWNE ZAKŁADKI NAWIGACJI -->
+                                <nav class="main-tabs-bar dashboard-tabs-bar" id="mainNavTabs">
+                                    <button class="main-tab-btn active" id="tabBtnGames" data-target="tabViewGames">Baza książek</button>
+                                    <button class="main-tab-btn" id="tabBtnCharts" data-target="tabViewCharts">Wykresy</button>
+                                </nav>
                             </div>
-
-                            <!-- Przycisk resetowania filtrów -->
-                            <button type="button" id="btnResetFilters" class="btn-secondary" style="font-size: 14px; padding: 6px 12px;">Resetuj</button>
-
-                            <!-- GŁÓWNE ZAKŁADKI NAWIGACJI (TABY W PRAWYM DOLNYM ROGU PASKA FILTRÓW) -->
-                            <nav class="main-tabs-bar dashboard-tabs-bar" id="mainNavTabs">
-                                <button class="main-tab-btn active" id="tabBtnGames" data-target="tabViewGames">Baza książek</button>
-                                <button class="main-tab-btn" id="tabBtnCharts" data-target="tabViewCharts">Wykresy</button>
-                            </nav>
                         </div>
                     </div>
 
@@ -292,6 +298,27 @@
                         <!-- KOMUNIKAT BRAKU WYNIKÓW -->
                         <div id="emptyResultsMessage" class="empty-state" style="display: none;">
                             <p>Nie znaleziono książek spełniających wybrane kryteria.</p>
+                        </div>
+
+                        <!-- PASEK PAGINACJI I PODZIAŁU KATEGORII -->
+                        <div class="pagination-bar" id="paginationBar" style="display: none;">
+                            <button type="button" class="pagination-btn pagination-prev" id="btnPaginationPrev" title="Poprzednia strona" aria-label="Poprzednia strona">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </button>
+                            <div class="pagination-page-wrapper" id="paginationPageWrapper">
+                                <button type="button" class="pagination-page-btn" id="btnPaginationPage">
+                                    <span id="paginationPageLabel">Strona 1</span>
+                                    <span class="dropdown-caret">▾</span>
+                                </button>
+                                <div class="pagination-dropdown-menu" id="paginationDropdownMenu" style="display: none;"></div>
+                            </div>
+                            <button type="button" class="pagination-btn pagination-next" id="btnPaginationNext" title="Następna strona" aria-label="Następna strona">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -615,13 +642,26 @@
     <!-- STOPKA -->
     <footer class="app-footer" id="appFooter">
         <div class="footer-content">
-            <span>&copy; Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) | Wersja 1.0</span>
+            <span>&copy; Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) | Wersja 1.1</span>
         </div>
     </footer>
 
     <!-- PŁYWAJĄCY TOOLTIP MINECRAFT NAJECHANIA NA KSIĄŻKĘ -->
     <div id="mcItemTooltip" class="mc-item-tooltip" style="display: none;"></div>
 
+    <script src="js/modules/state.js"></script>
+    <script src="js/modules/utils.js"></script>
+    <script src="js/modules/api.js"></script>
+    <script src="js/modules/cache.js"></script>
+    <script src="js/modules/sync.js"></script>
+    <script src="js/modules/profiles.js"></script>
+    <script src="js/modules/auth.js"></script>
+    <script src="js/modules/shelves.js"></script>
+    <script src="js/modules/showcase.js"></script>
+    <script src="js/modules/filters.js"></script>
+    <script src="js/modules/books.js"></script>
+    <script src="js/modules/settings.js"></script>
+    <script src="js/modules/charts.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

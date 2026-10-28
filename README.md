@@ -1,4 +1,4 @@
-# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 1.0
+# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 1.1
 
 Osobista baza przeczytanych, czytanych i planowanych książek, wirtualne półki oraz panel statystyk i porównań czytelników. Nowoczesna, w pełni responsywna aplikacja webowa typu serverless, hostowana bezpłatnie na GitHub Pages, komunikująca się bezpośrednio z arkuszem Google Sheets jako bazą danych za pośrednictwem Google Apps Script.
 
@@ -26,14 +26,30 @@ Aplikacja działa w oparciu o architekturę bezserwerową:
 +--------------------------------+
 ```
 
-* **Frontend**: Czysty HTML5, modułowy Vanilla CSS3 z tokenami projektowymi (`tokens.css`) oraz nowoczesny JavaScript (ES6+).
+* **Frontend**: Czysty HTML5, modułowy Vanilla CSS3 z tokenami projektowymi (`tokens.css`) oraz modułowy JavaScript (ES6+) podzielony na wyspecjalizowane moduły.
 * **Hosting**: GitHub Pages.
 * **Baza danych i silnik backendowy**: Google Sheets + Google Apps Script (REST Web App API / JSONP).
-* **Pamięć lokalna i kolejka**: `localStorage` / `sessionStorage` (sesja administratora, pamięć podręczna książek, kolejka synchronizacji w tle).
+* **Pamięć lokalna i kolejka**: `localStorage` / `sessionStorage` (sesja administratora per czytelnik, pamięć podręczna książek, kolejka synchronizacji w tle).
 
 ---
 
-## Główne funkcjonalności (Wersja 1.0)
+## Nowości i ulepszenia w Wersji 1.1
+
+1. **Modułowa architektura kodu JavaScript**:
+   * Rozbicie monolitycznego pliku `app.js` na niezależne, zwięzłe moduły w katalogu `js/modules/` (`state`, `utils`, `api`, `cache`, `sync`, `profiles`, `auth`, `shelves`, `showcase`, `filters`, `books`, `settings`, `charts`).
+   * Czytelniejszy kod, łatwiejsze utrzymanie i brak zależności od zewnętrznych bibliotek i frameworków.
+
+2. **Bezpieczne hasła i autoryzacja dynamiczna**:
+   * Hasła administratorów pobierane z właściwości projektu Google Apps Script (`ScriptProperties`) lub arkusza ustawień, zamiast na stałe wpisanych haseł w kodzie.
+   * Ścisła kontrola uprawnień per profil bazy: użytkownik zalogowany do swojej bazy widzi pozostałe profile wyłącznie w trybie do odczytu (brak możliwości przypadkowej edycji obcych książek).
+
+3. **Paginacja i responsywna pojemność regałów**:
+   * Automatyczne dostosowywanie liczby półek do szerokości okna przeglądarki (1 do 3 regałów na stronę).
+   * Płynna nawigacja stronnicowa oraz poprawne resetowanie widoku monitora przy zmianie filtrów i profili.
+
+---
+
+## Główne funkcjonalności
 
 1. **Wirtualne półki z białego drewna i pionowe grzbiety**:
    * Prezentacja biblioteki w formie regałów wykonanych z jasnego/białego drewna.
@@ -99,7 +115,21 @@ MMNR Baza Książek/
 │       ├── tables.css           # Tabele słowników ustawień
 │       └── responsive.css       # RWD dla laptopów, tabletów i telefonów
 ├── js/
-│   └── app.js                   # Główna logika frontendowa aplikacji
+│   ├── app.js                   # Punkt wejścia i inicjalizacja aplikacji
+│   └── modules/
+│       ├── state.js             # Globalny stan aplikacji
+│       ├── utils.js             # Funkcje pomocnicze, daty, formatowanie
+│       ├── api.js               # Komunikacja sieciowa z Google Apps Script
+│       ├── cache.js             # Pamięć podręczna książek i słowników
+│       ├── sync.js              # Kolejka synchronizacji w tle (Optimistic UI)
+│       ├── profiles.js          # Zarządzanie profilami i przełączanie użytkowników
+│       ├── auth.js              # Weryfikacja haseł i uprawnienia administratora
+│       ├── shelves.js           # Półki, paginacja, monitor Minecraft i grzbiety
+│       ├── showcase.js          # Gablota wyróżnionych tytułów i baner profilu
+│       ├── filters.js           # Wyszukiwanie, sortowanie i filtry kolekcji
+│       ├── books.js             # Formularze dodawania, edycji i usuwania książek
+│       ├── settings.js          # Słowniki bazy i edycja kategorii
+│       └── charts.js            # Generator wykresów statystyk SVG
 └── resources/
     └── Book_GithubPages.gs      # Kod backendu Google Apps Script
 ```

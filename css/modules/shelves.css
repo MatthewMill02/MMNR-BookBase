@@ -18,34 +18,34 @@
 }
 
 .shelf-group-section {
-    background: rgba(20, 24, 30, 0.88);
-    border: 1px solid #364152;
-    border-radius: 6px;
-    padding: 22px 14px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 18px 0 0 0;
     position: relative;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: none;
     box-sizing: border-box;
     width: 100%;
-    content-visibility: auto;
-    contain-intrinsic-size: 280px;
 }
 
 .shelf-group-header {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
+    position: relative;
+    top: 0;
+    left: 0;
+    transform: none;
+    display: inline-block;
     background: #141c27;
     border: 1px solid #2d3f57;
-    padding: 3px 18px;
-    border-radius: 12px;
+    padding: 6px 20px;
+    border-radius: 14px;
     font-size: 14px;
     font-weight: bold;
     color: #f0f6fc;
     letter-spacing: 0.5px;
     white-space: nowrap;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+    margin-bottom: 14px;
+    z-index: 2;
 }
 
 .shelf-group-shelves-row {
@@ -112,8 +112,8 @@
     display: flex;
     align-items: flex-end;
     justify-content: flex-start;
-    gap: 3px;
-    padding: 0 6px 2px 6px;
+    gap: 2px;
+    padding: 0 4px 2px 4px;
     position: relative;
     box-sizing: border-box;
 }
@@ -135,6 +135,9 @@
 
 .game-spine.spine-vertical {
     width: 30px;
+    min-width: 30px;
+    max-width: 30px;
+    flex: 0 0 30px;
     height: 84px;
     border-radius: 3px 3px 2px 2px;
     border-left: 2px solid rgba(255, 255, 255, 0.28);
@@ -162,7 +165,7 @@
 }
 
 .game-spine.spine-vertical.spine-upright {
-    margin-left: 2px;
+    margin-left: 0;
 }
 
 .game-spine.spine-vertical.spine-upright:hover {

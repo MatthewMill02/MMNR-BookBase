@@ -93,12 +93,12 @@ function updateBrowserTab(user = null) {
     const faviconEl = document.getElementById("dynamicFavicon");
     const appBaseName = "Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly)";
     if (user) {
-        document.title = `${user.name || user.sheetName} - ${appBaseName} (v1.1)`;
+        document.title = `${user.name || user.sheetName} - ${appBaseName} (v1.2)`;
         if (faviconEl) {
             faviconEl.href = user.avatar || "assets/icon.jpg";
         }
     } else {
-        document.title = `${appBaseName} - Wersja 1.1`;
+        document.title = `${appBaseName} - Wersja 1.2`;
         if (faviconEl) {
             faviconEl.href = "assets/icon.jpg";
         }

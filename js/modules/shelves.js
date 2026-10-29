@@ -778,9 +778,14 @@ function initPaginationEvents() {
         }
     });
 
+    let lastWindowWidth = window.innerWidth;
     window.addEventListener("resize", debounce(() => {
-        if (state.currentTab === "tabViewGames" && state.currentScreen === "dashboard") {
-            renderGamesShelves();
+        const currentWidth = window.innerWidth;
+        if (currentWidth !== lastWindowWidth) {
+            lastWindowWidth = currentWidth;
+            if (state.currentTab === "tabViewGames" && state.currentScreen === "dashboard") {
+                renderGamesShelves();
+            }
         }
     }, 200));
 }

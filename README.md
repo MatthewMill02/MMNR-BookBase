@@ -1,4 +1,4 @@
-# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 1.1
+# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 1.2
 
 Osobista baza przeczytanych, czytanych i planowanych książek, wirtualne półki oraz panel statystyk i porównań czytelników. Nowoczesna, w pełni responsywna aplikacja webowa typu serverless, hostowana bezpłatnie na GitHub Pages, komunikująca się bezpośrednio z arkuszem Google Sheets jako bazą danych za pośrednictwem Google Apps Script.
 
@@ -33,7 +33,24 @@ Aplikacja działa w oparciu o architekturę bezserwerową:
 
 ---
 
-## Nowości i ulepszenia w Wersji 1.1
+## Nowości i ulepszenia w Wersji 1.2
+
+1. **Optymalizacje widoku mobilnego (Mobile UI / UX)**:
+   * Regały w siatce 2 kolumny x 3 rzędy (dokładnie 6 biblioteczek na stronę) na ekranach smartfonów.
+   * Sztywne dopasowanie układu książek: dokładnie 6 książek w górnym i 6 w dolnym rzędzie na każdym regale.
+   * Płynne skalowanie pionowego tekstu na grzbietach z zachowaniem proporcji regału.
+   * Likwidacja migotania i niepożądanego przeładowywania półek przy przewijaniu ekranu góra-dół na telefonie.
+
+2. **Bezpieczeństwo uprawnień i poprawka przełączania profili**:
+   * Usunięcie wymuszenia widoczności przycisków administracyjnych w nagłówku mobilnym.
+   * Przy przejściu z własnej bazy na bazę innego czytelnika przyciski dodawania i edycji są natychmiastowo ukrywane, jeśli nie podano dedykowanego hasła dla danego profilu.
+
+3. **Animowany wskaźnik odświeżania danych**:
+   * Po kliknięciu `[Odśwież]` pojawia się animacja `...` sygnalizująca aktywne pobieranie danych z Google Sheets na telefonie i komputerze.
+
+---
+
+## Nowości w Wersji 1.1
 
 1. **Modułowa architektura kodu JavaScript**:
    * Rozbicie monolitycznego pliku `app.js` na niezależne, zwięzłe moduły w katalogu `js/modules/` (`state`, `utils`, `api`, `cache`, `sync`, `profiles`, `auth`, `shelves`, `showcase`, `filters`, `books`, `settings`, `charts`).
@@ -41,10 +58,10 @@ Aplikacja działa w oparciu o architekturę bezserwerową:
 
 2. **Bezpieczne hasła i autoryzacja dynamiczna**:
    * Hasła administratorów pobierane z właściwości projektu Google Apps Script (`ScriptProperties`) lub arkusza ustawień, zamiast na stałe wpisanych haseł w kodzie.
-   * Ścisła kontrola uprawnień per profil bazy: użytkownik zalogowany do swojej bazy widzi pozostałe profile wyłącznie w trybie do odczytu (brak możliwości przypadkowej edycji obcych książek).
+   * Ścisła kontrola uprawnień per profil bazy: użytkownik zalogowany do swojej bazy widzi pozostałe profile wyłącznie w trybie do odczytu.
 
 3. **Paginacja i responsywna pojemność regałów**:
-   * Automatyczne dostosowywanie liczby półek do szerokości okna przeglądarki (1 do 3 regałów na stronę).
+   * Automatyczne dostosowywanie liczby półek do szerokości okna przeglądarki.
    * Płynna nawigacja stronnicowa oraz poprawne resetowanie widoku monitora przy zmianie filtrów i profili.
 
 ---

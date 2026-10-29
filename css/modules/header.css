@@ -254,6 +254,30 @@
 }
 
 /* ===================================================
+   ANIMACJA KROPEK PRZYCISKU ODŚWIEŻANIA (...)
+   =================================================== */
+
+.loading-dots {
+    display: inline-block;
+    min-width: 14px;
+    text-align: left;
+}
+
+.loading-dots::after {
+    content: '';
+    display: inline-block;
+    animation: loadingDotsSteps 1.5s infinite steps(4, end);
+}
+
+@keyframes loadingDotsSteps {
+    0%   { content: ''; }
+    25%  { content: '.'; }
+    50%  { content: '..'; }
+    75%  { content: '...'; }
+    100% { content: ''; }
+}
+
+/* ===================================================
    ROZWIJANE MENU PROFILI W NAGŁÓWKU
    =================================================== */
 

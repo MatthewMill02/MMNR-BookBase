@@ -54,6 +54,25 @@
 
     .header-mobile-bar {
         display: flex !important;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mobile-hamburger-btn {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 4px 8px !important;
+        font-size: 18px !important;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+    }
+
+    .mobile-header-user-tag {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 4px 8px !important;
+        box-sizing: border-box;
     }
 
     .mobile-header-right {
@@ -70,15 +89,29 @@
         padding: 4px 10px;
         font-size: 14px;
         white-space: nowrap;
-        display: inline-flex !important;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
         line-height: 1;
         box-sizing: border-box;
     }
 
-    .mobile-header-right .admin-only-block {
-        display: none;
+    .mobile-header-right .sync-status-btn {
+        min-height: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        width: 32px !important;
+        padding: 3px !important;
+    }
+
+    .mobile-header-right .sync-icon-img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .mobile-header-right .admin-only-block[style*="display: none"],
+    .admin-only-block.is-admin-hidden {
+        display: none !important;
     }
 
     .app-header {
@@ -116,7 +149,7 @@
 
     .search-sort-bar {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         align-items: center;
         gap: 8px;
         margin-bottom: 0;
@@ -124,9 +157,9 @@
     }
 
     .search-wrapper {
-        width: 100%;
-        flex: 1 1 100%;
-        min-width: 100%;
+        flex: 1;
+        min-width: 0;
+        width: auto;
     }
 
     .search-input {
@@ -136,17 +169,41 @@
         height: 38px;
     }
 
+    .btn-toggle-controls-mobile {
+        display: flex !important;
+        flex-shrink: 0;
+        width: 38px;
+        height: 38px;
+    }
+
     .search-bar-icon {
         left: 10px;
         width: 16px;
         height: 16px;
     }
 
+    .sort-group-filters-row {
+        display: flex;
+        gap: 10px;
+        width: 100%;
+    }
+
     .sort-wrapper, .group-wrapper {
         flex: 1;
         min-width: 0;
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .sort-wrapper .control-section-label,
+    .group-wrapper .control-section-label {
+        font-size: 11px;
+        color: var(--color-text-muted);
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        margin-bottom: 2px;
     }
 
     .sort-wrapper select, .group-wrapper select {
@@ -259,17 +316,23 @@
     }
 
     .shelf-group-section {
-        padding: 18px 6px 12px;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 4px 0 0 0;
         width: 100%;
         box-sizing: border-box;
     }
 
-    .shelf-group-shelves-row {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 12px;
-        width: 100%;
+    .shelf-group-header {
+        position: relative !important;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        display: inline-block !important;
+        margin-bottom: 12px;
+        font-size: 13px;
+        padding: 4px 14px;
     }
 
     .form-row {
@@ -491,44 +554,71 @@
     }
 
     .shelf-group-shelves-row {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        justify-content: center;
-        align-content: start;
-        min-height: 550px;
-        gap: 8px;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        justify-content: center !important;
+        justify-items: center !important;
+        align-content: start !important;
+        min-height: auto;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
     }
 
     .game-shelf-unit {
-        width: 100%;
-        height: auto;
-        min-height: 250px;
-        padding: 8px;
-        max-width: 100%;
-        box-sizing: border-box;
+        width: 100% !important;
+        max-width: 216px !important;
+        aspect-ratio: 1 / 1 !important;
+        height: auto !important;
+        min-height: unset !important;
+        padding: 6px 4px !important;
+        margin: 0 auto;
+        flex-shrink: 0;
+        box-sizing: border-box !important;
+    }
+
+    /* Gablota na profilu zachowuje czytelne proporcje */
+    .game-shelf-unit.shelf-unit-showcase {
+        width: 216px !important;
+        max-width: 90vw !important;
+        aspect-ratio: 1 / 1 !important;
+        height: auto !important;
+        min-height: unset !important;
+        margin: 0 auto;
+        flex-shrink: 0;
     }
 
     .shelf-tier {
-        height: 124px;
-        padding: 0 5px 3px 5px;
+        height: 46% !important;
+        padding: 0 2px 2px 2px !important;
+        gap: 2px !important;
+        display: flex !important;
+        align-items: flex-end !important;
+        justify-content: flex-start !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
     }
 
     .game-spine.spine-vertical {
-        width: 39px;
-        height: 108px;
+        width: calc((100% - 10px) / 6) !important;
+        min-width: 0 !important;
+        max-width: calc((100% - 10px) / 6) !important;
+        flex: 0 0 calc((100% - 10px) / 6) !important;
+        height: 90% !important;
+        box-sizing: border-box !important;
+        border-radius: 2px !important;
     }
 
     .game-spine.spine-vertical.spine-upright {
-        margin-left: 3px;
+        margin-left: 0 !important;
     }
 
     .game-spine-text {
-        font-size: 14px;
-        max-height: 96px;
-        padding-top: 6px;
-        padding-bottom: 4px;
+        font-size: clamp(7px, 2.2vw, 10px) !important;
+        max-height: 92% !important;
+        padding-top: 2px !important;
+        padding-bottom: 2px !important;
+        letter-spacing: -0.5px !important;
     }
 }

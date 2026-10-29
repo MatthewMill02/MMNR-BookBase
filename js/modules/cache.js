@@ -89,25 +89,30 @@ function invalidateUsersCache() {
 }
 
 async function handleForceRefreshAll() {
-    const btn = document.getElementById("btnRefreshData");
-    if (btn) {
+    const btnDesktop = document.getElementById("btnRefreshData");
+    const btnMobile = document.getElementById("btnMobileRefresh");
+    const refreshButtons = [btnDesktop, btnMobile].filter(Boolean);
+
+    refreshButtons.forEach(btn => {
         btn.disabled = true;
-        btn.textContent = "Odświeżanie...";
-    }
+        btn.innerHTML = `Odśwież<span class="loading-dots"></span>`;
+    });
 
     invalidateGamesCache();
     invalidateSettingsCache();
     invalidateUsersCache();
 
-    await fetchUsersList(true);
-    await fetchSettingsAndStats(true);
+    try {
+        await fetchUsersList(true);
+        await fetchSettingsAndStats(true);
 
-    if (state.currentUser) {
-        await loadGamesForUser(state.currentUser.sheetName, true);
-    }
-
-    if (btn) {
-        btn.disabled = false;
-        btn.textContent = "[Odśwież]";
+        if (state.currentUser) {
+            await loadGamesForUser(state.currentUser.sheetName, true);
+        }
+    } finally {
+        refreshButtons.forEach(btn => {
+            btn.disabled = false;
+            btn.textContent = "[Odśwież]";
+        });
     }
 }

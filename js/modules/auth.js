@@ -128,27 +128,35 @@ function applyAdminUiState() {
     const mobileAdminLabel = document.getElementById("mobileAdminLabel");
 
     if (state.isAdmin) {
-        if (syncStatusWrapper) syncStatusWrapper.style.display = "flex";
-        if (mobileSyncWrapper) mobileSyncWrapper.style.display = "flex";
-        if (btnAdminLogin) btnAdminLogin.style.display = "none";
-        if (btnEditShowcase) btnEditShowcase.style.display = "inline-block";
+        if (syncStatusWrapper) syncStatusWrapper.style.setProperty("display", "flex", "important");
+        if (mobileSyncWrapper) mobileSyncWrapper.style.setProperty("display", "flex", "important");
+        if (btnAdminLogin) btnAdminLogin.style.setProperty("display", "none", "important");
+        if (btnEditShowcase) btnEditShowcase.style.setProperty("display", "inline-block", "important");
         if (mobileAdminLabel) mobileAdminLabel.textContent = "Wyloguj administratora";
         adminOnlyBlocks.forEach(el => {
-            if (el.classList.contains("drawer-menu-item")) {
-                el.style.display = "flex";
+            el.classList.remove("is-admin-hidden");
+            if (el.id === "mobileSyncWrapper") {
+                el.style.setProperty("display", "flex", "important");
+            } else if (el.id === "btnMobileAddGame") {
+                el.style.setProperty("display", "inline-flex", "important");
+            } else if (el.classList.contains("drawer-menu-item")) {
+                el.style.setProperty("display", "flex", "important");
             } else if (el.classList.contains("action-btn") || el.tagName === "BUTTON") {
-                el.style.display = "inline-block";
+                el.style.setProperty("display", "inline-block", "important");
             } else {
-                el.style.display = "flex";
+                el.style.setProperty("display", "flex", "important");
             }
         });
     } else {
-        if (syncStatusWrapper) syncStatusWrapper.style.display = "none";
-        if (mobileSyncWrapper) mobileSyncWrapper.style.display = "none";
-        if (btnAdminLogin) btnAdminLogin.style.display = "inline-block";
-        if (btnEditShowcase) btnEditShowcase.style.display = "none";
+        if (syncStatusWrapper) syncStatusWrapper.style.setProperty("display", "none", "important");
+        if (mobileSyncWrapper) mobileSyncWrapper.style.setProperty("display", "none", "important");
+        if (btnAdminLogin) btnAdminLogin.style.setProperty("display", "inline-block", "important");
+        if (btnEditShowcase) btnEditShowcase.style.setProperty("display", "none", "important");
         if (mobileAdminLabel) mobileAdminLabel.textContent = "Zaloguj administratora";
-        adminOnlyBlocks.forEach(el => el.style.display = "none");
+        adminOnlyBlocks.forEach(el => {
+            el.classList.add("is-admin-hidden");
+            el.style.setProperty("display", "none", "important");
+        });
     }
 
     if (typeof renderMonitorGameDetails === "function") {

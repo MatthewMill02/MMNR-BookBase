@@ -67,12 +67,12 @@
             </div>
         </div>
 
-        <!-- Mobile Header Right (Dodaj książkę + Odśwież + Sync Status) -->
+        <!-- Mobile Header Right (Zgodnie ze screenshotami użytkownika: [+] Dodaj grę (tylko zalogowany) + [Odśwież] + Ikona sync (tylko zalogowany)) -->
         <div class="mobile-header-right mobile-only">
-            <button id="btnMobileAddGame" class="action-btn btn-action-accent admin-only-block" style="display: none;" title="Dodaj nową książkę">[+] Dodaj książkę</button>
+            <button id="btnMobileAddGame" class="action-btn btn-action-accent admin-only-block" style="display: none;" title="Dodaj nową książkę">[+] Dodaj grę</button>
             <button id="btnMobileRefresh" class="action-btn" title="Odśwież">[Odśwież]</button>
-            <div id="mobileSyncWrapper" class="sync-status-wrapper" style="display: none;">
-                <button id="btnMobileSyncStatus" class="sync-status-btn">
+            <div id="mobileSyncWrapper" class="sync-status-wrapper admin-only-block" style="display: none;">
+                <button id="btnMobileSyncStatus" class="sync-status-btn" title="Kolejka synchronizacji w chmurze">
                     <img id="mobileSyncStatusImg" src="assets/sync.png" alt="Sync" class="sync-icon-img">
                 </button>
             </div>
@@ -642,7 +642,7 @@
     <!-- STOPKA -->
     <footer class="app-footer" id="appFooter">
         <div class="footer-content">
-            <span>&copy; Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) | Wersja 1.1</span>
+            <span>&copy; Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) | Wersja 1.2</span>
         </div>
     </footer>
 

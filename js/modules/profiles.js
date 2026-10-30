@@ -12,15 +12,16 @@ function renderWelcomeHeads() {
     const containerRect = container.getBoundingClientRect();
     const boxRect = centerBox.getBoundingClientRect();
 
-    const headWidth = 100;
-    const headHeight = 100;
-    const padding = 16;
+    const isMobile = window.innerWidth <= 768;
+    const headWidth = isMobile ? 70 : 100;
+    const headHeight = isMobile ? 80 : 100;
+    const padding = isMobile ? 8 : 16;
 
     const forbiddenZone = {
-        left: (boxRect.left - containerRect.left) - 20,
-        top: (boxRect.top - containerRect.top) - 20,
-        right: (boxRect.right - containerRect.left) + 20,
-        bottom: (boxRect.bottom - containerRect.top) + 20
+        left: (boxRect.left - containerRect.left) - (isMobile ? 10 : 20),
+        top: (boxRect.top - containerRect.top) - (isMobile ? 10 : 20),
+        right: (boxRect.right - containerRect.left) + (isMobile ? 10 : 20),
+        bottom: (boxRect.bottom - containerRect.top) + (isMobile ? 10 : 20)
     };
 
     const placedPositions = [];
@@ -93,12 +94,12 @@ function updateBrowserTab(user = null) {
     const faviconEl = document.getElementById("dynamicFavicon");
     const appBaseName = "Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly)";
     if (user) {
-        document.title = `${user.name || user.sheetName} - ${appBaseName} (v1.2)`;
+        document.title = `${user.name || user.sheetName} - ${appBaseName} (v1.2.1)`;
         if (faviconEl) {
             faviconEl.href = user.avatar || "assets/icon.jpg";
         }
     } else {
-        document.title = `${appBaseName} - Wersja 1.2`;
+        document.title = `${appBaseName} - Wersja 1.2.1`;
         if (faviconEl) {
             faviconEl.href = "assets/icon.jpg";
         }
@@ -144,7 +145,8 @@ function switchUserProfile(user) {
     document.getElementById("activeProfileName").textContent = user.name;
     document.getElementById("bannerProfileAvatar").src = user.avatar;
     document.getElementById("bannerProfileName").textContent = user.name;
-    document.getElementById("bannerProfileSheet").textContent = user.sheetName;
+    const bannerSheetEl = document.getElementById("bannerProfileSheet");
+    if (bannerSheetEl) bannerSheetEl.textContent = user.sheetName;
 
     // Mobile avatar & code
     const mobileActiveAvatar = document.getElementById("mobileActiveAvatar");

@@ -243,20 +243,32 @@
     }
 
     .welcome-title {
-        font-size: 22px;
+        font-size: 19px;
+        line-height: 1.25;
+        margin-bottom: 4px;
+    }
+
+    .welcome-subtitle {
+        font-size: 14px;
     }
 
     .welcome-center-box {
-        padding: 20px;
+        padding: 14px 16px;
+        max-width: 90%;
     }
 
     .scatter-head-img {
-        width: 54px;
-        height: 54px;
+        width: 48px;
+        height: 48px;
+    }
+
+    .scatter-head-name {
+        margin-top: 4px;
+        font-size: 12px;
     }
 
     .scatter-head-card {
-        padding: 8px;
+        padding: 6px;
     }
 
     .dashboard-screen {
@@ -615,10 +627,10 @@
     }
 
     .game-spine-text {
-        font-size: clamp(7px, 2.2vw, 10px) !important;
-        max-height: 92% !important;
+        font-size: clamp(8px, 2.3vw, 10px) !important;
+        max-height: 90% !important;
         padding-top: 2px !important;
         padding-bottom: 2px !important;
-        letter-spacing: -0.5px !important;
+        letter-spacing: 0.2px !important;
     }
 }

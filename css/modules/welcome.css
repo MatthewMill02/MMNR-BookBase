@@ -3,7 +3,7 @@
    =================================================== */
 
 .welcome-screen {
-    flex: 1;
+    flex: 1 1 auto;
     position: relative;
     display: flex;
     align-items: center;
@@ -12,13 +12,24 @@
     min-height: 0;
     width: 100%;
     background-color: var(--color-bg);
-    padding: 20px;
+    padding: 12px;
+    box-sizing: border-box;
 }
 
 body.screen-welcome {
     height: 100vh;
+    height: 100dvh;
     max-height: 100vh;
+    max-height: 100dvh;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+body.screen-welcome .app-footer {
+    flex-shrink: 0;
+    margin-top: 0;
+    padding: 8px 12px;
 }
 
 .welcome-center-box {

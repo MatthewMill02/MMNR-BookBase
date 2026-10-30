@@ -8,7 +8,8 @@ function updateProfileBanner() {
     const user = state.currentUser;
     document.getElementById("bannerProfileAvatar").src = user.avatar;
     document.getElementById("bannerProfileName").textContent = user.name;
-    document.getElementById("bannerProfileSheet").textContent = user.sheetName;
+    const bannerSheetEl = document.getElementById("bannerProfileSheet");
+    if (bannerSheetEl) bannerSheetEl.textContent = user.sheetName;
 
     // Obliczanie statystyk
     const totalBooks = state.games.length;

@@ -1,6 +1,6 @@
 /**
  * MMNR Baza Książek - Główny skrypt inicjalizacyjny (ES6+)
- * Oficjalna nazwa: Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) - Wersja 1.2
+ * Oficjalna nazwa: Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) - Wersja 1.2.1
  * Wytyczne: Czysty JavaScript, brak emotek, optymalizacja mobilna,
  * architektura modułowa, optymistyczna synchronizacja w tle.
  */

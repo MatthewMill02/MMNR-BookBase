@@ -1,4 +1,4 @@
-# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 1.2
+# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 1.2.1
 
 Osobista baza przeczytanych, czytanych i planowanych książek, wirtualne półki oraz panel statystyk i porównań czytelników. Nowoczesna, w pełni responsywna aplikacja webowa typu serverless, hostowana bezpłatnie na GitHub Pages, komunikująca się bezpośrednio z arkuszem Google Sheets jako bazą danych za pośrednictwem Google Apps Script.
 
@@ -30,6 +30,22 @@ Aplikacja działa w oparciu o architekturę bezserwerową:
 * **Hosting**: GitHub Pages.
 * **Baza danych i silnik backendowy**: Google Sheets + Google Apps Script (REST Web App API / JSONP).
 * **Pamięć lokalna i kolejka**: `localStorage` / `sessionStorage` (sesja administratora per czytelnik, pamięć podręczna książek, kolejka synchronizacji w tle).
+
+---
+
+## Nowości i ulepszenia w Wersji 1.2.1
+
+1. **Poprawki nazewnictwa**:
+   * Zmiana przycisku w nagłówku mobilnym z „[+] Dodaj grę” na „[+] Dodaj książkę”.
+
+2. **Nowy sposób prezentacji grzbietów książek**:
+   * Tekst na grzbietach pisany naturalnie bokiem wzdłuż grzbietu (obrót o 90 stopni w prawo), zamiast pionowego układu pojedynczych liter.
+
+3. **Uproszczenie widoku profilu**:
+   * Usunięcie zdublowanego podtytułu pod nazwą czytelnika na banerze.
+
+4. **Pełna widoczność stopki na telefonie**:
+   * Dopasowanie wysokości ekranu wyboru profilu (`100dvh`) i kompaktowych wymiarów elementów tak, aby stopka była widoczna od razu bez przewijania.
 
 ---
 

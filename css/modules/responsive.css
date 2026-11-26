@@ -147,6 +147,14 @@
         min-height: 550px;
     }
 
+    .dashboard-controls {
+        display: block;
+    }
+
+    .dashboard-controls-collapsible {
+        display: block;
+    }
+
     .search-sort-bar {
         display: flex;
         flex-wrap: nowrap;

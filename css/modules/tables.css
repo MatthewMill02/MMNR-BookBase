@@ -112,6 +112,12 @@
     gap: 2px;
 }
 
+.data-table tbody tr:last-child .table-menu-dropdown,
+.data-table tbody tr:nth-last-child(2) .table-menu-dropdown {
+    top: auto;
+    bottom: calc(100% + 2px);
+}
+
 .table-menu-item {
     background: transparent;
     border: none;

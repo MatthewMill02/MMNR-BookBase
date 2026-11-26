@@ -1,4 +1,4 @@
-# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 2.0
+# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 2.1
 
 Osobista baza przeczytanych, czytanych i planowanych książek, wirtualne półki oraz panel statystyk i porównań czytelników. Nowoczesna, w pełni responsywna aplikacja webowa typu serverless, hostowana bezpłatnie na GitHub Pages, komunikująca się bezpośrednio z arkuszem Google Sheets jako bazą danych za pośrednictwem Google Apps Script.
 
@@ -30,6 +30,22 @@ Aplikacja działa w oparciu o architekturę bezserwerową:
 * **Hosting**: GitHub Pages.
 * **Baza danych i silnik backendowy**: Google Sheets + Google Apps Script (REST Web App API / JSONP).
 * **Pamięć lokalna i kolejka**: `localStorage` / `sessionStorage` (sesja administratora per czytelnik, pamięć podręczna książek, kolejka synchronizacji w tle).
+
+---
+
+## Nowości i ulepszenia w Wersji 2.1
+
+1. **Kolorowanie książek na Forum według właściciela**:
+   * Na profilu **Forum** grzbiety książek przyjmują kolor profilu osoby, która dodała dany tytuł, podczas gdy w indywidualnych biblioteczkach kolory nadal zależą od statusu.
+
+2. **Szybkie dodawanie: „Zapisz do siebie” i „Następny tom”**:
+   * Przycisk **Zapisz do siebie** na Forum i w cudzych bazach (z wyborem bazy docelowej przy wielu zalogowanych kontach) otwiera formularz z uzupełnionymi danymi książki i domyślnym statusem `Chcę przeczytać`.
+   * Przycisk **Następny tom** w edycji własnej książki oraz pod monitorem pozwala błyskawicznie dodać kolejną część serii.
+
+3. **Reorganizacja formularza i poprawki UI / Mobile**:
+   * Nowa kolejność pól w formularzu książki (Tytuł -> Autor/Okładka -> Gatunek -> Status/Pochodzenie -> Tagi -> Oceny -> Data/Przeczytania -> Recenzja).
+   * Reset pozycji przewijania przy otwieraniu modala książki, większa czcionka na grzbietach oraz większa czcionka i interlinia w polu `Recenzja`.
+   * Naprawione menu kontekstowe w dolnych wierszach tabel ustawień oraz pełna blokada przewijania tła na telefonie przy otwartym pop-upie.
 
 ---
 

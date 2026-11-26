@@ -179,7 +179,7 @@ function openGameDetailsModal(game) {
 
         ${review ? `
             <div style="margin-bottom: 10px;">
-                <span style="font-size: 14px; color: var(--color-text-muted); text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">Recenzja / Notatka:</span>
+                <span style="font-size: 14px; color: var(--color-text-muted); text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px;">Recenzja:</span>
                 <div class="game-review-snippet" style="margin: 0; border: none; padding: 0; white-space: pre-wrap;">${escapeHtml(review)}</div>
             </div>
         ` : ""}
@@ -187,6 +187,22 @@ function openGameDetailsModal(game) {
 
     if (adminActions) {
         adminActions.style.display = state.isAdmin ? "flex" : "none";
+    }
+
+    const saveToOwnBtn = document.getElementById("btnDetailsSaveToOwn");
+    if (saveToOwnBtn) {
+        const loggedUsers = typeof getLoggedInRealUsers === "function" ? getLoggedInRealUsers() : [];
+        const canSaveToOwn = (!state.isAdmin || (state.currentUser && state.currentUser.isForum)) && loggedUsers.length > 0;
+        if (canSaveToOwn) {
+            saveToOwnBtn.style.display = "inline-block";
+            saveToOwnBtn.onclick = () => {
+                closeModal("gameDetailsModal");
+                handleSaveToOwnClick(game);
+            };
+        } else {
+            saveToOwnBtn.style.display = "none";
+            saveToOwnBtn.onclick = null;
+        }
     }
 
     const editBtn = document.getElementById("btnDetailsEdit");
@@ -213,19 +229,38 @@ function renderMonitorGameDetails(game) {
     if (!screen) return;
 
     const btnExtEdit = document.getElementById("btnMonitorExtEdit");
+    const btnExtNextVol = document.getElementById("btnMonitorExtNextVol");
     const btnExtDelete = document.getElementById("btnMonitorExtDelete");
+    const btnExtSaveToOwn = document.getElementById("btnMonitorExtSaveToOwn");
+
+    const loggedUsers = typeof getLoggedInRealUsers === "function" ? getLoggedInRealUsers() : [];
+    const canSaveToOwn = (!state.isAdmin || (state.currentUser && state.currentUser.isForum)) && loggedUsers.length > 0;
 
     if (!game) {
         screen.innerHTML = "";
         if (btnExtEdit) {
+            btnExtEdit.style.display = state.isAdmin ? "inline-flex" : "none";
             btnExtEdit.disabled = true;
             btnExtEdit.innerHTML = "";
             btnExtEdit.onclick = null;
         }
+        if (btnExtNextVol) {
+            btnExtNextVol.style.display = state.isAdmin ? "inline-flex" : "none";
+            btnExtNextVol.disabled = true;
+            btnExtNextVol.innerHTML = "";
+            btnExtNextVol.onclick = null;
+        }
         if (btnExtDelete) {
+            btnExtDelete.style.display = state.isAdmin ? "inline-flex" : "none";
             btnExtDelete.disabled = true;
             btnExtDelete.innerHTML = "";
             btnExtDelete.onclick = null;
+        }
+        if (btnExtSaveToOwn) {
+            btnExtSaveToOwn.style.display = canSaveToOwn ? "inline-flex" : "none";
+            btnExtSaveToOwn.disabled = true;
+            btnExtSaveToOwn.innerHTML = "";
+            btnExtSaveToOwn.onclick = null;
         }
         return;
     }
@@ -233,24 +268,51 @@ function renderMonitorGameDetails(game) {
     // Aktualizacja przycisków pod obrazem (wyłącznie w trybie administratora bieżącej bazy)
     if (btnExtEdit) {
         if (state.isAdmin) {
+            btnExtEdit.style.display = "inline-flex";
             btnExtEdit.disabled = false;
             btnExtEdit.innerHTML = `<span>Edytuj książkę</span>`;
             btnExtEdit.onclick = () => openGameEditModal(game);
         } else {
+            btnExtEdit.style.display = canSaveToOwn ? "none" : "inline-flex";
             btnExtEdit.disabled = true;
             btnExtEdit.innerHTML = "";
             btnExtEdit.onclick = null;
         }
     }
+    if (btnExtNextVol) {
+        if (state.isAdmin) {
+            btnExtNextVol.style.display = "inline-flex";
+            btnExtNextVol.disabled = false;
+            btnExtNextVol.innerHTML = `<span>Następny tom</span>`;
+            btnExtNextVol.onclick = () => openNextVolumeFromCurrent(game);
+        } else {
+            btnExtNextVol.style.display = "none";
+            btnExtNextVol.onclick = null;
+        }
+    }
     if (btnExtDelete) {
         if (state.isAdmin) {
+            btnExtDelete.style.display = "inline-flex";
             btnExtDelete.disabled = false;
             btnExtDelete.innerHTML = `<span>Usuń książkę</span>`;
             btnExtDelete.onclick = () => handleDeleteGame(game.id, game["book name"] || game["Tytuł"]);
         } else {
+            btnExtDelete.style.display = canSaveToOwn ? "none" : "inline-flex";
             btnExtDelete.disabled = true;
             btnExtDelete.innerHTML = "";
             btnExtDelete.onclick = null;
+        }
+    }
+
+    if (btnExtSaveToOwn) {
+        if (canSaveToOwn) {
+            btnExtSaveToOwn.style.display = "inline-flex";
+            btnExtSaveToOwn.disabled = false;
+            btnExtSaveToOwn.innerHTML = `<span>Zapisz do siebie</span>`;
+            btnExtSaveToOwn.onclick = () => handleSaveToOwnClick(game);
+        } else {
+            btnExtSaveToOwn.style.display = "none";
+            btnExtSaveToOwn.onclick = null;
         }
     }
 
@@ -357,7 +419,7 @@ function renderMonitorGameDetails(game) {
 
             ${review ? `
                 <div class="monitor-review-section">
-                    <div class="monitor-section-title">Recenzja / Notatka:</div>
+                    <div class="monitor-section-title">Recenzja:</div>
                     <div class="monitor-review-text">${escapeHtml(review)}</div>
                 </div>
             ` : ""}
@@ -1031,6 +1093,15 @@ function hideMcTooltip() {
 
 function getSpineColorForGame(game) {
     if (!game) return "#2f3e52";
+
+    // Na Forum kolor grzbietu zależy od koloru profilu właściciela książki
+    if (state.currentUser && state.currentUser.isForum && game._ownerCode) {
+        const owner = (state.users || []).find(u => !u.isForum && u.code === game._ownerCode);
+        if (owner && owner.color) {
+            return owner.color;
+        }
+    }
+
     const status = (game["status"] || game["Stan"] || "").toString().trim().toLowerCase();
     const userCode = state.currentUser ? (state.currentUser.code || "").toString().trim().toUpperCase() : "";
 

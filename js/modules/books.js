@@ -36,8 +36,12 @@ function attemptCloseGameEditModal() {
     }
 }
 
-function openGameEditModal(game = null) {
-    if (!state.isAdmin) return;
+function openGameEditModal(game = null, options = {}) {
+    const isPrefill = Boolean(options && options.prefillFromBook);
+    const targetSheet = (options && options.targetSheet) ? options.targetSheet : null;
+    if (!state.isAdmin && !isPrefill) return;
+
+    state.targetSheetOverride = targetSheet;
 
     const form = document.getElementById("gameEditForm");
     form.reset();
@@ -46,28 +50,51 @@ function openGameEditModal(game = null) {
     const imageInput = document.getElementById("formGameImage");
     const previewBox = document.getElementById("formCoverPreviewBox");
     const previewImg = document.getElementById("formCoverPreviewImg");
+    const btnNextVolume = document.getElementById("btnNextVolume");
 
     if (game) {
-        document.getElementById("gameEditModalTitle").textContent = "Edytuj książkę";
-        document.getElementById("formGameId").value = game.id || "";
+        if (isPrefill) {
+            document.getElementById("gameEditModalTitle").textContent = options.modalTitle || "Zapisz książkę do siebie";
+            document.getElementById("formGameId").value = "";
+            if (btnNextVolume) btnNextVolume.style.display = "none";
+        } else {
+            document.getElementById("gameEditModalTitle").textContent = "Edytuj książkę";
+            document.getElementById("formGameId").value = game.id || "";
+            if (btnNextVolume) {
+                btnNextVolume.style.display = "inline-block";
+                btnNextVolume.onclick = () => openNextVolumeFromCurrent(game);
+            }
+        }
         document.getElementById("formGameTitle").value = game["book name"] || game["Tytuł"] || "";
         
         if (document.getElementById("formAuthor")) {
             document.getElementById("formAuthor").value = game["author"] || game["Autor"] || "";
         }
         if (document.getElementById("formOrigin")) {
-            document.getElementById("formOrigin").value = game["origin"] || game["Pochodzenie"] || "";
+            document.getElementById("formOrigin").value = (isPrefill && !options.keepOriginAndTags) ? "" : (game["origin"] || game["Pochodzenie"] || "");
         }
 
-        document.getElementById("formRatingFabuła").value = game["style score"] !== undefined && game["style score"] !== "" ? game["style score"] : (game["Ocena fabuły"] !== undefined ? game["Ocena fabuły"] : "");
-        document.getElementById("formRatingGrafika").value = game["plot score"] !== undefined && game["plot score"] !== "" ? game["plot score"] : (game["Ocena grafiki"] !== undefined ? game["Ocena grafiki"] : "");
-        document.getElementById("formRatingMechanika").value = game["structure score"] !== undefined && game["structure score"] !== "" ? game["structure score"] : (game["Ocena mechanik"] !== undefined ? game["Ocena mechanik"] : "");
-        document.getElementById("formRatingOgólna").value = game["final score"] !== undefined && game["final score"] !== "" ? game["final score"] : (game["Ocena gry"] !== undefined ? game["Ocena gry"] : "");
-        
-        document.getElementById("formCompletionDate").value = game["completion date"] || game["Data ukończenia"] || "";
-        if (document.getElementById("formRereadCounter")) {
-            const rr = game["reread counter"] !== undefined && game["reread counter"] !== "" ? game["reread counter"] : (game["Reread counter"] || "");
-            document.getElementById("formRereadCounter").value = rr;
+        if (isPrefill) {
+            document.getElementById("formRatingFabuła").value = "";
+            document.getElementById("formRatingGrafika").value = "";
+            document.getElementById("formRatingMechanika").value = "";
+            document.getElementById("formRatingOgólna").value = "";
+            document.getElementById("formCompletionDate").value = "";
+            if (document.getElementById("formRereadCounter")) document.getElementById("formRereadCounter").value = "";
+            document.getElementById("formReview").value = "";
+            document.getElementById("formCollections").value = options.keepOriginAndTags ? (game["tags"] || game["Kolekcje"] || "") : "";
+        } else {
+            document.getElementById("formRatingFabuła").value = game["style score"] !== undefined && game["style score"] !== "" ? game["style score"] : (game["Ocena fabuły"] !== undefined ? game["Ocena fabuły"] : "");
+            document.getElementById("formRatingGrafika").value = game["plot score"] !== undefined && game["plot score"] !== "" ? game["plot score"] : (game["Ocena grafiki"] !== undefined ? game["Ocena grafiki"] : "");
+            document.getElementById("formRatingMechanika").value = game["structure score"] !== undefined && game["structure score"] !== "" ? game["structure score"] : (game["Ocena mechanik"] !== undefined ? game["Ocena mechanik"] : "");
+            document.getElementById("formRatingOgólna").value = game["final score"] !== undefined && game["final score"] !== "" ? game["final score"] : (game["Ocena gry"] !== undefined ? game["Ocena gry"] : "");
+            document.getElementById("formCompletionDate").value = game["completion date"] || game["Data ukończenia"] || "";
+            if (document.getElementById("formRereadCounter")) {
+                const rr = game["reread counter"] !== undefined && game["reread counter"] !== "" ? game["reread counter"] : (game["Reread counter"] || "");
+                document.getElementById("formRereadCounter").value = rr;
+            }
+            document.getElementById("formCollections").value = game["tags"] || game["Kolekcje"] || "";
+            document.getElementById("formReview").value = game["review"] || game["Recenzja"] || "";
         }
 
         const rawImage = (game["cover"] || game["Obraz"] || game["obraz"] || "").trim();
@@ -82,14 +109,13 @@ function openGameEditModal(game = null) {
             }
         }
 
-        document.getElementById("formCollections").value = game["tags"] || game["Kolekcje"] || "";
-        document.getElementById("formReview").value = game["review"] || game["Recenzja"] || "";
         const rawGenre = game["genre"] || game["Platforma"] || "";
         if (document.getElementById("formGamePlatform")) document.getElementById("formGamePlatform").value = rawGenre;
         if (document.getElementById("formGenre")) document.getElementById("formGenre").value = rawGenre;
     } else {
         document.getElementById("gameEditModalTitle").textContent = "Dodaj książkę do bazy";
         document.getElementById("formGameId").value = "";
+        if (btnNextVolume) btnNextVolume.style.display = "none";
         if (document.getElementById("formAuthor")) document.getElementById("formAuthor").value = "";
         if (document.getElementById("formOrigin")) document.getElementById("formOrigin").value = "";
         if (document.getElementById("formRereadCounter")) document.getElementById("formRereadCounter").value = "";
@@ -106,13 +132,76 @@ function openGameEditModal(game = null) {
     populateSelectOptionsForForm();
 
     if (game) {
-        document.getElementById("formGameStatus").value = game["status"] || game["Stan"] || "";
+        const statusSelect = document.getElementById("formGameStatus");
+        if (isPrefill && statusSelect) {
+            const wantToReadOpt = Array.from(statusSelect.options).find(o => o.value.toLowerCase().includes("chcę przeczytać") || o.value.toLowerCase().includes("chce przeczytac"));
+            statusSelect.value = wantToReadOpt ? wantToReadOpt.value : "Chcę przeczytać";
+        } else if (statusSelect) {
+            statusSelect.value = game["status"] || game["Stan"] || "";
+        }
     }
 
     // Zapisanie migawki początkowego stanu formularza do wykrywania niezapisanych zmian
     state.formInitialSnapshot = getGameFormSnapshot();
 
     openModal("gameEditModal");
+    const editModalBody = document.querySelector("#gameEditModal .modal-body");
+    if (editModalBody) {
+        editModalBody.scrollTop = 0;
+        requestAnimationFrame(() => {
+            editModalBody.scrollTop = 0;
+        });
+    }
+}
+
+function openNextVolumeFromCurrent(game) {
+    if (!game) return;
+    openGameEditModal(game, {
+        prefillFromBook: true,
+        targetSheet: state.currentUser ? state.currentUser.sheetName : null,
+        modalTitle: "Dodaj następny tom",
+        keepOriginAndTags: true
+    });
+}
+
+function handleSaveToOwnClick(game) {
+    if (!game) return;
+    const loggedUsers = typeof getLoggedInRealUsers === "function" ? getLoggedInRealUsers() : [];
+    if (loggedUsers.length === 0) return;
+
+    if (loggedUsers.length === 1) {
+        openGameEditModal(game, {
+            prefillFromBook: true,
+            targetSheet: loggedUsers[0].sheetName,
+            modalTitle: `Zapisz do siebie (${loggedUsers[0].code})`
+        });
+        return;
+    }
+
+    const select = document.getElementById("selectTargetBaseInput");
+    const confirmBtn = document.getElementById("btnConfirmTargetBase");
+    if (select) {
+        select.innerHTML = "";
+        loggedUsers.forEach(u => {
+            const opt = document.createElement("option");
+            opt.value = u.sheetName;
+            opt.textContent = u.name || `Biblioteczka ${u.code}`;
+            select.appendChild(opt);
+        });
+    }
+    if (confirmBtn) {
+        confirmBtn.onclick = () => {
+            const chosenSheet = select ? select.value : loggedUsers[0].sheetName;
+            const chosenUser = loggedUsers.find(u => u.sheetName === chosenSheet) || loggedUsers[0];
+            closeModal("selectTargetBaseModal");
+            openGameEditModal(game, {
+                prefillFromBook: true,
+                targetSheet: chosenUser.sheetName,
+                modalTitle: `Zapisz do siebie (${chosenUser.code})`
+            });
+        };
+    }
+    openModal("selectTargetBaseModal");
 }
 
 function updateFormColorPreview(title = null) {
@@ -361,7 +450,9 @@ function populateSelectOptionsForForm() {
 
 function handleGameFormSubmit(e) {
     e.preventDefault();
-    if (!state.currentUser || !state.isAdmin) return;
+    const targetSheet = state.targetSheetOverride || (state.currentUser ? state.currentUser.sheetName : null);
+    if (!targetSheet) return;
+    if (!state.isAdmin && !state.targetSheetOverride) return;
 
     const gameId = document.getElementById("formGameId").value;
     const isEdit = !!gameId;
@@ -428,27 +519,37 @@ function handleGameFormSubmit(e) {
     };
 
     const previousGames = [...state.games];
-    const currentSheet = state.currentUser.sheetName;
+    const currentSheet = targetSheet;
+    const isSameSheet = state.currentUser && currentSheet === state.currentUser.sheetName;
 
-    if (isEdit) {
-        const idx = state.games.findIndex(g => String(g.id) === String(gameId));
-        if (idx !== -1) {
-            state.games[idx] = { ...state.games[idx], ...bookDetails };
-            if (state.selectedGame && String(state.selectedGame.id) === String(gameId)) {
-                state.selectedGame = state.games[idx];
+    if (isSameSheet) {
+        if (isEdit) {
+            const idx = state.games.findIndex(g => String(g.id) === String(gameId));
+            if (idx !== -1) {
+                state.games[idx] = { ...state.games[idx], ...bookDetails };
+                if (state.selectedGame && String(state.selectedGame.id) === String(gameId)) {
+                    state.selectedGame = state.games[idx];
+                }
             }
+        } else {
+            state.games.unshift(bookDetails);
+        }
+
+        setCachedGames(currentSheet, state.games);
+        updateProfileBanner();
+        populateFilterOptions();
+        renderGamesGrid();
+        if (state.selectedGame) {
+            renderMonitorGameDetails(state.selectedGame);
         }
     } else {
-        state.games.unshift(bookDetails);
+        const cachedTarget = getCachedGames(currentSheet);
+        if (Array.isArray(cachedTarget)) {
+            cachedTarget.unshift(bookDetails);
+            setCachedGames(currentSheet, cachedTarget);
+        }
     }
-
-    setCachedGames(currentSheet, state.games);
-    updateProfileBanner();
-    populateFilterOptions();
-    renderGamesGrid();
-    if (state.selectedGame) {
-        renderMonitorGameDetails(state.selectedGame);
-    }
+    state.targetSheetOverride = null;
     state.formInitialSnapshot = null;
     closeModal("gameEditModal");
 

@@ -46,10 +46,14 @@ body::before {
     will-change: transform;
 }
 
+html:has(body.modal-open),
 body.modal-open {
     overflow: hidden !important;
+    overscroll-behavior: none !important;
+}
+
+body.modal-open {
     touch-action: none;
-    overscroll-behavior: none;
 }
 
 /* ===================================================

@@ -59,7 +59,7 @@ function renderWelcomeHeads() {
         placedPositions.push({ x, y });
 
         const card = document.createElement("div");
-        card.className = "scatter-head-card";
+        card.className = "scatter-head-card" + (user.isForum ? " forum-silver-border" : "");
         card.style.left = `${x}px`;
         card.style.top = `${y}px`;
         if (user.color) {
@@ -94,16 +94,35 @@ function updateBrowserTab(user = null) {
     const faviconEl = document.getElementById("dynamicFavicon");
     const appBaseName = "Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly)";
     if (user) {
-        document.title = `${user.name || user.sheetName} - ${appBaseName} (v1.2.1)`;
+        document.title = `${user.name || ("Biblioteczka " + user.code)} - ${appBaseName}`;
         if (faviconEl) {
             faviconEl.href = user.avatar || "assets/icon.jpg";
         }
     } else {
-        document.title = `${appBaseName} - Wersja 1.2.1`;
+        document.title = appBaseName;
         if (faviconEl) {
             faviconEl.href = "assets/icon.jpg";
         }
     }
+}
+
+function getForumVirtualUser() {
+    return {
+        id: "forum",
+        code: "FORUM",
+        name: "Forum",
+        sheetName: "FORUM",
+        avatar: "assets/icon.jpg",
+        color: "#c0c0c0",
+        hoverColor: "#d0d7de",
+        isForum: true
+    };
+}
+
+function ensureForumInUsers(usersList) {
+    const list = Array.isArray(usersList) ? usersList.filter(u => !u.isForum) : [];
+    list.push(getForumVirtualUser());
+    return list;
 }
 
 function showWelcomeScreen() {
@@ -117,7 +136,33 @@ function showWelcomeScreen() {
     document.getElementById("welcomeScreen").style.display = "flex";
     document.getElementById("dashboardScreen").style.display = "none";
 
+    // 1. Wczytaj zapisane profile z localStorage, aby od razu je wyświetlić
+    if (!state.users || state.users.length === 0) {
+        try {
+            const cachedUsers = localStorage.getItem(CACHE_KEYS.USERS);
+            if (cachedUsers) {
+                const parsed = JSON.parse(cachedUsers);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    state.users = parsed;
+                }
+            }
+        } catch (e) {}
+    }
+
+    state.users = ensureForumInUsers(state.users);
     renderWelcomeHeads();
+
+    // 2. W tle sprawdź w bazie czy pojawiły się nowe/zaktualizowane profile
+    const subtitleEl = document.querySelector(".welcome-subtitle");
+    if (subtitleEl) {
+        subtitleEl.innerHTML = `Wczytywanie profili czytelników<span class="loading-dots"></span>`;
+    }
+
+    fetchUsersList(true).finally(() => {
+        if (subtitleEl) {
+            subtitleEl.textContent = "Wybierz profil czytelnika";
+        }
+    });
 }
 
 function showDashboardScreen() {
@@ -139,6 +184,15 @@ function switchUserProfile(user) {
     checkAdminStatusForUser(user);
     updateBrowserTab(user);
     showDashboardScreen();
+
+    const bannerEl = document.getElementById("profileBanner");
+    if (bannerEl) {
+        bannerEl.classList.toggle("forum-silver-border", Boolean(user && user.isForum));
+    }
+    const showcaseCol = document.getElementById("showcaseColumn");
+    if (showcaseCol) {
+        showcaseCol.style.display = (user && user.isForum) ? "none" : "";
+    }
 
     // Natychmiastowa aktualizacja nagłówka oraz belki profilu
     document.getElementById("activeProfileAvatar").src = user.avatar;
@@ -215,62 +269,52 @@ function renderProfileDropdownMenu() {
 }
 
 async function fetchUsersList(forceRefresh = false) {
-    if (!forceRefresh && state.cache.users) {
+    if (!forceRefresh && state.cache.users && state.users.length > 0) {
         state.users = state.cache.users;
         return;
     }
 
     try {
         const response = await sendApiRequest({ action: "getAllUsers" });
-        if (response.status === "success" && Array.isArray(response.data) && response.data.length > 0) {
-            let usersChanged = false;
+        if (response.status === "success" && Array.isArray(response.data)) {
+            const fetchedUsers = ensureForumInUsers(response.data.map(remoteUser => {
+                const code = (remoteUser.code || remoteUser.name || "").toString().replace(/\s*Books$/i, "").trim().toUpperCase();
+                const sheetName = remoteUser.sheetName || `${code} Books`;
+                const color = (remoteUser.color || remoteUser.tabColor || "#2a4365").toString().trim();
+                const avatar = (remoteUser.avatar || remoteUser["icon link"] || "").toString().trim() || "assets/icon.jpg";
 
-            response.data.forEach(remoteUser => {
-                let existing = state.users.find(u => u.code === remoteUser.code);
-                const isMM = remoteUser.code === "MM";
-                const isNK = remoteUser.code === "NK";
-                let defaultName = remoteUser.sheetName || remoteUser.name || `${remoteUser.code} Books`;
-                if (!defaultName.endsWith(" Books")) defaultName += " Books";
-                const isNR = remoteUser.code === "NR";
-                const defaultColor = isMM ? "#13a71f" : (isNR ? "#2563eb" : (isNK ? "#A81214" : (remoteUser.tabColor || "#2a4365")));
-                const defaultHover = isMM ? "#0f8518" : (isNR ? "#1d4ed8" : (isNK ? "#860e10" : (remoteUser.tabColor || "#1e314b")));
+                return {
+                    id: remoteUser.id,
+                    code: code,
+                    name: `Biblioteczka ${code}`,
+                    sheetName: sheetName,
+                    avatar: avatar,
+                    color: color,
+                    hoverColor: color
+                };
+            }).filter(u => u.code));
 
-                if (!existing) {
-                    existing = {
-                        code: remoteUser.code,
-                        name: defaultName,
-                        sheetName: remoteUser.sheetName || defaultName,
-                        avatar: getUserAvatarPath(remoteUser.sheetName || defaultName),
-                        color: defaultColor,
-                        hoverColor: defaultHover
-                    };
-                    state.users.push(existing);
-                    usersChanged = true;
-                } else {
-                    if (existing.name !== defaultName || existing.color !== defaultColor) {
-                        existing.name = defaultName;
-                        existing.color = defaultColor;
-                        existing.hoverColor = defaultHover;
-                        usersChanged = true;
-                    }
-                }
-            });
+            const prevJson = JSON.stringify(state.users);
+            const nextJson = JSON.stringify(fetchedUsers);
+            const usersChanged = prevJson !== nextJson;
 
-            state.cache.users = state.users;
+            state.users = fetchedUsers;
+            state.cache.users = fetchedUsers;
             try {
-                sessionStorage.setItem(CACHE_KEYS.USERS, JSON.stringify(state.users));
+                localStorage.setItem(CACHE_KEYS.USERS, nextJson);
             } catch (e) {}
 
-            // Re-renderuj tylko jeśli lista użytkowników rzeczywiście uległa zmianie
             if (usersChanged) {
                 if (state.currentScreen === "welcome") {
-                    renderWelcomeHeads();
+                    state.users = ensureForumInUsers(state.users);
+    renderWelcomeHeads();
                 }
                 renderProfileDropdownMenu();
                 if (state.currentUser) {
                     const currentUpdated = state.users.find(u => u.code === state.currentUser.code);
                     if (currentUpdated) {
                         state.currentUser = currentUpdated;
+                        applyUserTheme(currentUpdated);
                         updateProfileBanner();
                         updateBrowserTab(currentUpdated);
                     }
@@ -278,6 +322,6 @@ async function fetchUsersList(forceRefresh = false) {
             }
         }
     } catch (e) {
-        console.warn("Użyto lokalnej konfiguracji użytkowników.");
+        console.warn("Błąd pobierania profili z bazy, użyto pamięci lokalnej.", e);
     }
 }

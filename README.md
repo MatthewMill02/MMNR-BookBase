@@ -1,4 +1,4 @@
-# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 1.2.1
+# Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) — Wersja 2.0
 
 Osobista baza przeczytanych, czytanych i planowanych książek, wirtualne półki oraz panel statystyk i porównań czytelników. Nowoczesna, w pełni responsywna aplikacja webowa typu serverless, hostowana bezpłatnie na GitHub Pages, komunikująca się bezpośrednio z arkuszem Google Sheets jako bazą danych za pośrednictwem Google Apps Script.
 
@@ -30,6 +30,30 @@ Aplikacja działa w oparciu o architekturę bezserwerową:
 * **Hosting**: GitHub Pages.
 * **Baza danych i silnik backendowy**: Google Sheets + Google Apps Script (REST Web App API / JSONP).
 * **Pamięć lokalna i kolejka**: `localStorage` / `sessionStorage` (sesja administratora per czytelnik, pamięć podręczna książek, kolejka synchronizacji w tle).
+
+---
+
+## Nowości i ulepszenia w Wersji 2.0
+
+1. **Dynamiczne profile z arkusza `profiles` i `localStorage`**:
+   * Profile nie są już zahardcodowane w kodzie — pobierane są z zakładki `profiles` (`id`, `name`, `color`, `icon link`).
+   * Ekran startowy najpierw wyświetla zapisane profile z `localStorage`, a następnie w tle sprawdza aktualizacje z animacją `Wczytywanie profili czytelników...`.
+
+2. **Dodawanie i edycja profili czytelników**:
+   * Możliwość podania linku URL do ikony z podglądem oraz koloru w formacie HEX z podglądem.
+   * Edycja inicjałów, ikony i koloru profilu z automatyczną aktualizacją nazwy arkusza i odwołań w formułach statystyk (z użyciem polskich formuł `=JEŻELI(...)`, `=LICZ.JEŻELI(...)`, `=ILE.LICZB(...)`, `=ŚREDNIA(...)`).
+   * Dodawanie nowych profili dostępne wyłącznie dla pierwszego profilu administratora.
+
+3. **Licznik ponownych przeczytań (`reread counter`)**:
+   * Nowe pole w formularzu książki, na monitorze oraz w modalu szczegółów.
+
+4. **Wirtualny profil Forum**:
+   * Profil **Forum** ze srebrnym obramowaniem i ikoną aplikacji, agregujący w trybie tylko do odczytu wszystkie książki wszystkich czytelników od najnowszej.
+
+5. **Rework Ustawień Bazy i poprawki mobilne**:
+   * Przycisk Ustawień widoczny wyłącznie dla zalogowanych użytkowników; w tabelach wyświetlane są tylko kolumny wybranego konta, a przy wielu zalogowanych bazach dostępna jest rozwijana lista wyboru konta.
+   * Usunięcie kafelka aktywnej bazy z górnej belki mobilnej oraz wyrównanie pop-upów do górnej krawędzi ekranu na telefonach.
+   * Nazewnictwo profili ujednolicone do formatu `Biblioteczka {inicjały}` oraz usunięcie numeru wersji z tytułu karty przeglądarki.
 
 ---
 

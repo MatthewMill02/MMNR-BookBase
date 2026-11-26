@@ -398,6 +398,8 @@
 
     .modal-backdrop {
         padding: 8px 6px;
+        align-items: flex-start !important;
+        justify-content: center;
         overscroll-behavior: contain;
     }
 

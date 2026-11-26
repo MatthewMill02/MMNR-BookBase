@@ -14,6 +14,7 @@ function getGameFormSnapshot() {
         ratingMechanika: (document.getElementById("formRatingMechanika").value || "").trim(),
         ratingOgólna: (document.getElementById("formRatingOgólna").value || "").trim(),
         completionDate: (document.getElementById("formCompletionDate").value || "").trim(),
+        rereadCounter: (document.getElementById("formRereadCounter") ? document.getElementById("formRereadCounter").value : "").trim(),
         image: (document.getElementById("formGameImage") ? document.getElementById("formGameImage").value : "").trim(),
         collections: (document.getElementById("formCollections").value || "").trim(),
         review: (document.getElementById("formReview").value || "").trim()
@@ -64,6 +65,10 @@ function openGameEditModal(game = null) {
         document.getElementById("formRatingOgólna").value = game["final score"] !== undefined && game["final score"] !== "" ? game["final score"] : (game["Ocena gry"] !== undefined ? game["Ocena gry"] : "");
         
         document.getElementById("formCompletionDate").value = game["completion date"] || game["Data ukończenia"] || "";
+        if (document.getElementById("formRereadCounter")) {
+            const rr = game["reread counter"] !== undefined && game["reread counter"] !== "" ? game["reread counter"] : (game["Reread counter"] || "");
+            document.getElementById("formRereadCounter").value = rr;
+        }
 
         const rawImage = (game["cover"] || game["Obraz"] || game["obraz"] || "").trim();
         if (imageInput) imageInput.value = rawImage;
@@ -87,6 +92,7 @@ function openGameEditModal(game = null) {
         document.getElementById("formGameId").value = "";
         if (document.getElementById("formAuthor")) document.getElementById("formAuthor").value = "";
         if (document.getElementById("formOrigin")) document.getElementById("formOrigin").value = "";
+        if (document.getElementById("formRereadCounter")) document.getElementById("formRereadCounter").value = "";
         if (imageInput) imageInput.value = "";
         if (previewBox && previewImg) {
             previewImg.src = "";
@@ -403,6 +409,7 @@ function handleGameFormSubmit(e) {
         "structure score": parseNum(document.getElementById("formRatingMechanika").value),
         "final score": parseNum(document.getElementById("formRatingOgólna").value),
         "completion date": document.getElementById("formCompletionDate").value,
+        "reread counter": document.getElementById("formRereadCounter") ? document.getElementById("formRereadCounter").value : "",
         "review": document.getElementById("formReview").value.trim(),
         "tags": document.getElementById("formCollections").value.trim(),
         "cover": imageVal,

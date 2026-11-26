@@ -20,11 +20,7 @@ const state = {
     currentScreen: "welcome", // "welcome" | "dashboard"
     currentTab: "tabViewGames", // "tabViewGames" | "tabViewCharts"
     currentUser: null,
-    users: [
-        { code: "MM", name: "MM Books", sheetName: "MM Books", avatar: "assets/MM Books.PNG", color: "#13a71f", hoverColor: "#0f8518" },
-        { code: "NR", name: "NR Books", sheetName: "NR Books", avatar: "assets/NR Books.jpg", color: "#2563eb", hoverColor: "#1d4ed8" },
-        { code: "NK", name: "NK Books", sheetName: "NK Books", avatar: "assets/NK Books.PNG", color: "#A81214", hoverColor: "#860e10" }
-    ],
+    users: [],
     games: [],
     // Pamięć podręczna w ramach sesji
     cache: {

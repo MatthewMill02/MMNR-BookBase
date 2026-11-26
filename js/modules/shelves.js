@@ -135,6 +135,11 @@ function openGameDetailsModal(game) {
         </div>
 
         <div class="book-info-table" style="margin-bottom: 12px;">
+            ${game._ownerCode ? `
+            <div class="book-info-row">
+                <span class="book-info-label">Czytelnik</span>
+                <span class="book-info-val">Biblioteczka ${escapeHtml(game._ownerCode)}</span>
+            </div>` : ""}
             <div class="book-info-row">
                 <span class="book-info-label">Autor</span>
                 <span class="book-info-val">${author !== "-" ? author : "Nie podano"}</span>
@@ -146,6 +151,10 @@ function openGameDetailsModal(game) {
             <div class="book-info-row">
                 <span class="book-info-label">Data ukończenia</span>
                 <span class="book-info-val">${date ? date : "Nie ukończono"}</span>
+            </div>
+            <div class="book-info-row">
+                <span class="book-info-label">Liczba przeczytań</span>
+                <span class="book-info-val">${escapeHtml((game["reread counter"] !== undefined && game["reread counter"] !== "") ? String(game["reread counter"]) : "0")}</span>
             </div>
         </div>
 
@@ -295,6 +304,11 @@ function renderMonitorGameDetails(game) {
             </div>
 
             <div class="book-info-table">
+                ${game._ownerCode ? `
+                <div class="book-info-row">
+                    <span class="book-info-label">Czytelnik</span>
+                    <span class="book-info-val">Biblioteczka ${escapeHtml(game._ownerCode)}</span>
+                </div>` : ""}
                 <div class="book-info-row">
                     <span class="book-info-label">Autor</span>
                     <span class="book-info-val">${author !== "-" ? author : "Nie podano"}</span>
@@ -306,6 +320,10 @@ function renderMonitorGameDetails(game) {
                 <div class="book-info-row">
                     <span class="book-info-label">Ukończono</span>
                     <span class="book-info-val">${date ? date : "Nie ukończono"}</span>
+                </div>
+                <div class="book-info-row">
+                    <span class="book-info-label">Przeczytano</span>
+                    <span class="book-info-val">${escapeHtml((game["reread counter"] !== undefined && game["reread counter"] !== "") ? String(game["reread counter"]) : "0")}x</span>
                 </div>
             </div>
 
@@ -357,6 +375,52 @@ async function loadGamesForUser(sheetName, forceRefresh = false) {
     const shelvesContainer = document.getElementById("gamesShelvesContainer");
     const emptyResults = document.getElementById("emptyResultsMessage");
     const resultsCount = document.getElementById("resultsCount");
+
+    if (sheetName === "FORUM") {
+        state.games = [];
+        if (skeletonLoader) skeletonLoader.style.display = "grid";
+        if (shelvesContainer) shelvesContainer.style.display = "none";
+        if (emptyResults) emptyResults.style.display = "none";
+        if (resultsCount) resultsCount.textContent = "Pobieranie wszystkich książek na Forum...";
+
+        try {
+            const realUsers = state.users.filter(u => !u.isForum);
+            const allLists = await Promise.all(realUsers.map(async u => {
+                if (!forceRefresh) {
+                    const cached = getCachedGames(u.sheetName);
+                    if (cached !== null) {
+                        return cached.map(b => ({ ...b, _ownerCode: u.code }));
+                    }
+                }
+                const res = await sendApiRequestWithRetry({ action: "getAllBooks", user: u.sheetName }, null, 2);
+                if (res.status === "success" && Array.isArray(res.data)) {
+                    setCachedGames(u.sheetName, res.data);
+                    return res.data.map(b => ({ ...b, _ownerCode: u.code }));
+                }
+                return [];
+            }));
+
+            const combined = allLists.flat().sort((a, b) => {
+                const dateA = a["update"] || a["Aktualizacja"] || a["Akualizacja"] || a["id"] || "";
+                const dateB = b["update"] || b["Aktualizacja"] || b["Akualizacja"] || b["id"] || "";
+                return String(dateB).localeCompare(String(dateA));
+            });
+
+            state.games = combined;
+            state.filters.sort = "updated_desc";
+            updateProfileBanner();
+            populateFilterOptions();
+            await fetchSettingsAndStats(false);
+            renderGamesShelves();
+        } catch (err) {
+            if (emptyResults) {
+                emptyResults.innerHTML = `<p style="color: var(--color-danger);">Błąd podczas ładowania Forum.</p>`;
+                emptyResults.style.display = "block";
+            }
+            if (skeletonLoader) skeletonLoader.style.display = "none";
+        }
+        return;
+    }
 
     if (!forceRefresh) {
         const cached = getCachedGames(sheetName);

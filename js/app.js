@@ -1,6 +1,6 @@
 /**
  * MMNR Baza Książek - Główny skrypt inicjalizacyjny (ES6+)
- * Oficjalna nazwa: Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) - Wersja 1.2.1
+ * Oficjalna nazwa: Biblioteka Aleksandryjska ale ta nie może spłonąć (allegedly) - Wersja 2.0
  * Wytyczne: Czysty JavaScript, brak emotek, optymalizacja mobilna,
  * architektura modułowa, optymistyczna synchronizacja w tle.
  */
@@ -435,10 +435,35 @@ function initEvents() {
 
     // Dodawanie użytkownika
     const btnOpenAddUserModal = document.getElementById("btnOpenAddUserModal");
-    if (btnOpenAddUserModal) btnOpenAddUserModal.addEventListener("click", () => openModal("addUserModal"));
+    if (btnOpenAddUserModal) btnOpenAddUserModal.addEventListener("click", () => openUserModal(null));
 
     const addUserForm = document.getElementById("addUserForm");
     if (addUserForm) addUserForm.addEventListener("submit", handleAddUserSubmit);
+
+    const newUserColor = document.getElementById("newUserColor");
+    const newUserColorHex = document.getElementById("newUserColorHex");
+    const newUserColorPreview = document.getElementById("newUserColorPreview");
+    if (newUserColor && newUserColorHex && newUserColorPreview) {
+        newUserColor.addEventListener("input", () => {
+            newUserColorHex.value = newUserColor.value;
+            newUserColorPreview.style.backgroundColor = newUserColor.value;
+        });
+        newUserColorHex.addEventListener("input", () => {
+            const val = newUserColorHex.value.trim();
+            if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                newUserColor.value = val;
+                newUserColorPreview.style.backgroundColor = val;
+            }
+        });
+    }
+
+    const newUserIconLink = document.getElementById("newUserIconLink");
+    const newUserIconPreview = document.getElementById("newUserIconPreview");
+    if (newUserIconLink && newUserIconPreview) {
+        newUserIconLink.addEventListener("input", () => {
+            newUserIconPreview.src = newUserIconLink.value.trim() || "assets/icon.jpg";
+        });
+    }
 
     // Statystyki / Ustawienia
     const btnToggleStats = document.getElementById("btnToggleStats");

@@ -103,3 +103,9 @@ body.screen-welcome .app-footer {
     font-size: var(--font-size-base);
     color: var(--color-text-main);
 }
+
+.forum-silver-border {
+    border: 2px solid #c0c0c0 !important;
+    box-shadow: 0 0 12px rgba(210, 220, 230, 0.45), inset 0 0 6px rgba(255, 255, 255, 0.2) !important;
+    background: linear-gradient(145deg, rgba(42, 48, 56, 0.95), rgba(24, 28, 34, 0.98)) !important;
+}

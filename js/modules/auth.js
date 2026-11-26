@@ -3,8 +3,16 @@
  */
 
 function checkAdminStatusForUser(user) {
+    const activeUser = user || state.currentUser;
+    if (activeUser && activeUser.isForum) {
+        state.isAdmin = false;
+        state.adminPassword = "";
+        applyAdminUiState();
+        return;
+    }
+
     try {
-        const userSheet = user ? user.sheetName : (state.currentUser ? state.currentUser.sheetName : "MM Books");
+        const userSheet = activeUser ? activeUser.sheetName : "MM Books";
         const authMap = JSON.parse(localStorage.getItem("mmnr_auth_map") || "{}");
 
         if (authMap[userSheet]) {

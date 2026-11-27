@@ -140,24 +140,29 @@ function openGameDetailsModal(game) {
                 <span class="book-info-label">Czytelnik</span>
                 <span class="book-info-val">Biblioteczka ${escapeHtml(game._ownerCode)}</span>
             </div>` : ""}
+            ${author !== "-" ? `
             <div class="book-info-row">
                 <span class="book-info-label">Autor</span>
-                <span class="book-info-val">${author !== "-" ? author : "Nie podano"}</span>
-            </div>
+                <span class="book-info-val">${author}</span>
+            </div>` : ""}
+            ${origin !== "-" ? `
             <div class="book-info-row">
                 <span class="book-info-label">Pochodzenie / Źródło</span>
-                <span class="book-info-val">${origin !== "-" ? origin : "Nie podano"}</span>
-            </div>
+                <span class="book-info-val">${origin}</span>
+            </div>` : ""}
+            ${date ? `
             <div class="book-info-row">
                 <span class="book-info-label">Data ukończenia</span>
-                <span class="book-info-val">${date ? date : "Nie ukończono"}</span>
-            </div>
+                <span class="book-info-val">${date}</span>
+            </div>` : ""}
+            ${(game["reread counter"] !== undefined && game["reread counter"] !== "" && Number(game["reread counter"]) > 0) ? `
             <div class="book-info-row">
                 <span class="book-info-label">Liczba przeczytań</span>
-                <span class="book-info-val">${escapeHtml((game["reread counter"] !== undefined && game["reread counter"] !== "") ? String(game["reread counter"]) : "0")}</span>
-            </div>
+                <span class="book-info-val">${escapeHtml(String(game["reread counter"]))}</span>
+            </div>` : ""}
         </div>
 
+        ${(rating !== "-" || styleScore !== "-" || plotScore !== "-" || structScore !== "-") ? `
         <div class="ratings-breakdown-box" style="background: var(--color-bg); padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border-subtle); margin-bottom: 14px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 6px;">
                 <span style="font-weight: bold; font-size: 14px;">Ocena końcowa:</span>
@@ -168,7 +173,7 @@ function openGameDetailsModal(game) {
                 <div><span style="color: var(--color-text-muted); display: block;">Fabuła</span><strong>${plotScore}</strong></div>
                 <div><span style="color: var(--color-text-muted); display: block;">Struktura</span><strong>${structScore}</strong></div>
             </div>
-        </div>
+        </div>` : ""}
 
         ${tagsHtml ? `
             <div style="margin-bottom: 12px;">
@@ -251,7 +256,7 @@ function renderMonitorGameDetails(game) {
             btnExtNextVol.onclick = null;
         }
         if (btnExtDelete) {
-            btnExtDelete.style.display = state.isAdmin ? "inline-flex" : "none";
+            btnExtDelete.style.display = "none";
             btnExtDelete.disabled = true;
             btnExtDelete.innerHTML = "";
             btnExtDelete.onclick = null;
@@ -270,8 +275,8 @@ function renderMonitorGameDetails(game) {
         if (state.isAdmin) {
             btnExtEdit.style.display = "inline-flex";
             btnExtEdit.disabled = false;
-            btnExtEdit.innerHTML = `<span>Edytuj książkę</span>`;
-            btnExtEdit.onclick = () => openGameEditModal(game);
+            btnExtEdit.innerHTML = `<span>Szczegóły</span>`;
+            btnExtEdit.onclick = () => openGameDetailsModal(game);
         } else {
             btnExtEdit.style.display = canSaveToOwn ? "none" : "inline-flex";
             btnExtEdit.disabled = true;
@@ -283,7 +288,7 @@ function renderMonitorGameDetails(game) {
         if (state.isAdmin) {
             btnExtNextVol.style.display = "inline-flex";
             btnExtNextVol.disabled = false;
-            btnExtNextVol.innerHTML = `<span>Następny tom</span>`;
+            btnExtNextVol.innerHTML = `<span>Nowy tom</span>`;
             btnExtNextVol.onclick = () => openNextVolumeFromCurrent(game);
         } else {
             btnExtNextVol.style.display = "none";
@@ -291,17 +296,10 @@ function renderMonitorGameDetails(game) {
         }
     }
     if (btnExtDelete) {
-        if (state.isAdmin) {
-            btnExtDelete.style.display = "inline-flex";
-            btnExtDelete.disabled = false;
-            btnExtDelete.innerHTML = `<span>Usuń książkę</span>`;
-            btnExtDelete.onclick = () => handleDeleteGame(game.id, game["book name"] || game["Tytuł"]);
-        } else {
-            btnExtDelete.style.display = canSaveToOwn ? "none" : "inline-flex";
-            btnExtDelete.disabled = true;
-            btnExtDelete.innerHTML = "";
-            btnExtDelete.onclick = null;
-        }
+        btnExtDelete.style.display = "none";
+        btnExtDelete.disabled = true;
+        btnExtDelete.innerHTML = "";
+        btnExtDelete.onclick = null;
     }
 
     if (btnExtSaveToOwn) {
@@ -371,24 +369,29 @@ function renderMonitorGameDetails(game) {
                     <span class="book-info-label">Czytelnik</span>
                     <span class="book-info-val">Biblioteczka ${escapeHtml(game._ownerCode)}</span>
                 </div>` : ""}
+                ${author !== "-" ? `
                 <div class="book-info-row">
                     <span class="book-info-label">Autor</span>
-                    <span class="book-info-val">${author !== "-" ? author : "Nie podano"}</span>
-                </div>
+                    <span class="book-info-val">${author}</span>
+                </div>` : ""}
+                ${origin !== "-" ? `
                 <div class="book-info-row">
                     <span class="book-info-label">Pochodzenie</span>
-                    <span class="book-info-val">${origin !== "-" ? origin : "Nie podano"}</span>
-                </div>
+                    <span class="book-info-val">${origin}</span>
+                </div>` : ""}
+                ${date ? `
                 <div class="book-info-row">
                     <span class="book-info-label">Ukończono</span>
-                    <span class="book-info-val">${date ? date : "Nie ukończono"}</span>
-                </div>
+                    <span class="book-info-val">${date}</span>
+                </div>` : ""}
+                ${(game["reread counter"] !== undefined && game["reread counter"] !== "" && Number(game["reread counter"]) > 0) ? `
                 <div class="book-info-row">
                     <span class="book-info-label">Przeczytano</span>
-                    <span class="book-info-val">${escapeHtml((game["reread counter"] !== undefined && game["reread counter"] !== "") ? String(game["reread counter"]) : "0")}x</span>
-                </div>
+                    <span class="book-info-val">${escapeHtml(String(game["reread counter"]))}x</span>
+                </div>` : ""}
             </div>
 
+            ${(rating !== "-" || styleScore !== "-" || plotScore !== "-" || structScore !== "-") ? `
             <div class="monitor-ratings-section">
                 <div class="monitor-main-score">
                     <span class="monitor-score-label">Ocena końcowa</span>
@@ -408,7 +411,7 @@ function renderMonitorGameDetails(game) {
                         <span class="subscore-num">${structScore}</span>
                     </div>
                 </div>
-            </div>
+            </div>` : ""}
 
             ${tagsHtml ? `
                 <div class="monitor-tags-container">

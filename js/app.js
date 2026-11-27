@@ -217,8 +217,7 @@ function initEvents() {
     const btnToggleShowcaseCollapse = document.getElementById("btnToggleShowcaseCollapse");
     if (btnToggleShowcaseCollapse) {
         const savedSetting = localStorage.getItem("mmnr_showcase_collapsed");
-        const defaultCollapsedForScreen = window.innerWidth <= 1540;
-        const isCollapsed = savedSetting !== null ? savedSetting === "true" : defaultCollapsedForScreen;
+        const isCollapsed = savedSetting !== null ? savedSetting === "true" : true;
         applyShowcaseCollapseState(isCollapsed);
 
         btnToggleShowcaseCollapse.addEventListener("click", () => {
